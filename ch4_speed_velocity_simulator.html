@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speed & Velocity Simulator | Prayatnam Academy Palam</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#07111f;color:#fff}
+.wrap{max-width:1100px;margin:auto;padding:20px}
+header{background:#10213a;padding:18px;border-radius:16px;margin-bottom:16px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{margin:0;font-size:32px}.brand{color:#ffd166}.meta{color:#b8c7d9;line-height:1.6}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.card{background:#10213a;border-radius:16px;padding:16px}
+canvas{width:100%;aspect-ratio:16/9;background:#081728;border-radius:12px;display:block}
+.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+button,select{padding:11px;border:0;border-radius:10px;font-weight:700}
+button{background:#5bd4ff;cursor:pointer}.secondary{background:#29415f;color:white}.warn{background:#ffd166}
+input[type=range]{width:100%;margin-top:12px}
+.metric{background:#18304d;padding:14px;border-radius:12px;margin-bottom:10px}
+.label{color:#b8c7d9;font-size:12px;text-transform:uppercase}.value{font-size:28px;font-weight:bold;margin-top:4px}
+.speed{color:#ffd166}.velocity{color:#7ee2a8}
+.info{background:#0b1728;padding:12px;border-radius:10px;line-height:1.5;margin-top:10px}
+footer{text-align:center;color:#b8c7d9;margin-top:14px;font-size:13px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div><h1><span class="brand">Prayatnam Academy Palam</span><br>Speed & Velocity Simulator</h1><div class="meta">Interactive Physics Learning Tool</div></div>
+<div class="meta"><b>www.prayatnam247.com</b><br>Contact: <b>8115749450</b></div>
+</header>
+
+<div class="grid">
+<section class="card">
+<canvas id="c" width="900" height="500"></canvas>
+<div class="controls">
+<select id="mode">
+<option value="straight">Straight Motion</option>
+<option value="return">Go & Return</option>
+<option value="zigzag">Direction Change</option>
+</select>
+<button id="play">▶ Play</button>
+<button id="pause" class="secondary">⏸ Pause</button>
+<button id="reset" class="warn">↺ Reset</button>
+</div>
+<input id="progress" type="range" min="0" max="1000" value="0">
+</section>
+
+<aside class="card">
+<div class="metric"><div class="label">Elapsed Time</div><div class="value" id="time">0.0 s</div></div>
+<div class="metric"><div class="label">Distance</div><div class="value" id="distance">0.0 m</div></div>
+<div class="metric"><div class="label">Average Speed</div><div class="value speed" id="speed">0.0 m/s</div></div>
+<div class="metric"><div class="label">Average Velocity</div><div class="value velocity" id="velocity">0.0 m/s</div><div class="meta" id="direction">Direction: —</div></div>
+<div class="info"><b>Speed</b> = Total Distance ÷ Total Time<br>Speed has magnitude only.</div>
+<div class="info"><b>Velocity</b> = Displacement ÷ Total Time<br>Velocity has magnitude and direction.</div>
+</aside>
+</div>
+<footer>Prayatnam Academy Palam • www.prayatnam247.com • 8115749450</footer>
+</div>
+
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');
+const mode=document.getElementById('mode'),progress=document.getElementById('progress');
+const timeEl=document.getElementById('time'),distanceEl=document.getElementById('distance'),speedEl=document.getElementById('speed'),velocityEl=document.getElementById('velocity'),directionEl=document.getElementById('direction');
+const paths={
+straight:[{x:100,y:300},{x:800,y:300}],
+return:[{x:100,y:300},{x:800,y:300},{x:100,y:300}],
+zigzag:[{x:100,y:380},{x:320,y:150},{x:540,y:380},{x:800,y:170}]
+};
+let running=false,last=null;
+const scale=10,totalTime=20;
+function dist(a,b){return Math.hypot(b.x-a.x,b.y-a.y)}
+function lens(p){let s=[],t=0;for(let i=0;i<p.length-1;i++){let d=dist(p[i],p[i+1]);s.push(d);t+=d}return{s,t}}
+function pointAt(p,f){let L=lens(p),target=f*L.t,a=0;for(let i=0;i<L.s.length;i++){if(a+L.s[i]>=target){let q=(target-a)/L.s[i];return{x:p[i].x+(p[i+1].x-p[i].x)*q,y:p[i].y+(p[i+1].y-p[i].y)*q,travel:target}}a+=L.s[i]}let e=p[p.length-1];return{x:e.x,y:e.y,travel:L.t}}
+function arrow(x1,y1,x2,y2){let a=Math.atan2(y2-y1,x2-x1);ctx.strokeStyle='#7ee2a8';ctx.fillStyle='#7ee2a8';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-14*Math.cos(a-.45),y2-14*Math.sin(a-.45));ctx.lineTo(x2-14*Math.cos(a+.45),y2-14*Math.sin(a+.45));ctx.closePath();ctx.fill()}
+function draw(){
+let p=paths[mode.value],f=+progress.value/1000,cur=pointAt(p,f),start=p[0],L=lens(p);
+ctx.clearRect(0,0,c.width,c.height);
+ctx.strokeStyle='#203653';ctx.lineWidth=1;
+for(let x=0;x<c.width;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke()}
+for(let y=0;y<c.height;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke()}
+ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=8;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(p[0].x,p[0].y);for(let i=1;i<p.length;i++)ctx.lineTo(p[i].x,p[i].y);ctx.stroke();
+let target=f*L.t,a=0;ctx.strokeStyle='#ffd166';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(p[0].x,p[0].y);
+for(let i=0;i<L.s.length;i++){if(a+L.s[i]<=target){ctx.lineTo(p[i+1].x,p[i+1].y);a+=L.s[i]}else{let q=Math.max(0,(target-a)/L.s[i]);ctx.lineTo(p[i].x+(p[i+1].x-p[i].x)*q,p[i].y+(p[i+1].y-p[i].y)*q);break}}ctx.stroke();
+if(dist(start,cur)>4)arrow(start.x,start.y,cur.x,cur.y);
+ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(start.x,start.y,8,0,Math.PI*2);ctx.fill();ctx.fillStyle='#b8c7d9';ctx.font='15px Arial';ctx.fillText('Start',start.x-15,start.y+26);
+ctx.fillStyle='#5bd4ff';ctx.beginPath();ctx.arc(cur.x,cur.y,15,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.fillText('Object',cur.x+20,cur.y-12);
+let elapsed=f*totalTime,distance=cur.travel/scale,dx=(cur.x-start.x)/scale,dy=(start.y-cur.y)/scale,disp=Math.hypot(dx,dy);
+let speed=elapsed?distance/elapsed:0,vel=elapsed?disp/elapsed:0;
+timeEl.textContent=elapsed.toFixed(1)+' s';distanceEl.textContent=distance.toFixed(1)+' m';speedEl.textContent=speed.toFixed(2)+' m/s';velocityEl.textContent=vel.toFixed(2)+' m/s';
+if(disp<.05)directionEl.textContent='Direction: none / zero displacement';
+else{let ang=Math.atan2(dy,dx)*180/Math.PI,dir=ang>-22.5&&ang<22.5?'East':ang>=22.5&&ang<67.5?'North-East':ang>=67.5&&ang<112.5?'North':ang>=112.5&&ang<157.5?'North-West':ang>=157.5||ang<-157.5?'West':ang>=-157.5&&ang<-112.5?'South-West':ang>=-112.5&&ang<-67.5?'South':'South-East';directionEl.textContent='Direction: '+dir}
+}
+function anim(t){if(!running)return;if(last===null)last=t;let dt=t-last;last=t;let v=+progress.value+dt*.08;if(v>=1000){v=1000;running=false}progress.value=v;draw();if(running)requestAnimationFrame(anim)}
+document.getElementById('play').addEventListener('click',()=>{if(+progress.value>=1000)progress.value=0;running=true;last=null;requestAnimationFrame(anim)});
+document.getElementById('pause').addEventListener('click',()=>{running=false;last=null});
+document.getElementById('reset').addEventListener('click',()=>{running=false;last=null;progress.value=0;draw()});
+progress.addEventListener('input',draw);mode.addEventListener('change',()=>{running=false;last=null;progress.value=0;draw()});draw();
+</script>
+</body>
+</html>
