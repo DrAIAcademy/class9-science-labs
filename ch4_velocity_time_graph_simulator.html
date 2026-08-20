@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Velocity-Time Graph Simulator | Prayatnam Academy Palam</title>
+<style>
+:root{
+  --bg:#07111f;--panel:#10213a;--panel2:#18304d;--text:#f7f9fc;--muted:#b8c7d9;
+  --cyan:#5bd4ff;--yellow:#ffd166;--green:#7ee2a8;--red:#ff8498;--grid:#29405f;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Inter,Arial,sans-serif;
+  background:linear-gradient(135deg,#06101d,#0a1830 60%,#07111f);color:var(--text)
+}
+.wrap{max-width:1200px;margin:auto;padding:20px}
+header{
+  display:flex;justify-content:space-between;gap:16px;align-items:center;
+  background:var(--panel);border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;padding:18px;margin-bottom:16px
+}
+h1{margin:0;font-size:clamp(27px,4vw,42px)} .brand{color:var(--yellow)}
+.meta{color:var(--muted);line-height:1.6;font-size:14px}.contact{text-align:right}
+.layout{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+.card{
+  background:rgba(16,33,58,.96);border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;padding:16px
+}
+h2{margin:0 0 12px;font-size:20px}
+canvas{width:100%;display:block;background:#081728;border-radius:13px;border:1px solid rgba(255,255,255,.07)}
+#motionCanvas{aspect-ratio:16/7} #graphCanvas{aspect-ratio:4/3}
+.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}
+button,select{
+  width:100%;padding:10px;border:0;border-radius:10px;font:inherit;font-weight:700
+}
+button{cursor:pointer;background:var(--cyan);color:#06131d}
+.secondary{background:#29415f;color:white}.warn{background:var(--yellow);color:#2b2100}
+select{background:#29415f;color:white}
+.sliderbox{margin-top:12px;padding:12px;background:rgba(255,255,255,.04);border-radius:12px}
+.sliderbox label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+input[type=range]{width:100%;accent-color:var(--cyan)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}
+.metric{background:var(--panel2);padding:12px;border-radius:12px}
+.metric .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.metric .value{font-size:22px;font-weight:800;margin-top:5px}
+.time{color:var(--cyan)}.velocity{color:var(--yellow)}.accel{color:var(--green)}.disp{color:var(--red)}
+.info{margin-top:12px;background:#0b1728;border-radius:11px;padding:13px;line-height:1.55}
+.key{color:var(--yellow);font-weight:700}
+.examples{
+  margin-top:16px;background:var(--panel);border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;padding:16px
+}
+.exgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:10px}
+.ex{background:var(--panel2);padding:12px;border-radius:11px;cursor:pointer;min-height:94px}
+.ex b{color:var(--yellow)}
+footer{text-align:center;color:var(--muted);padding:16px 4px 2px;font-size:13px}
+@media(max-width:900px){
+ .layout{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}
+ .metrics,.exgrid{grid-template-columns:1fr 1fr}
+ header{flex-direction:column;align-items:flex-start}.contact{text-align:left}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1><span class="brand">Prayatnam Academy Palam</span><br>Velocity–Time Graph Simulator Lab</h1>
+    <div class="meta">Understand velocity, acceleration and displacement using live motion and graphs.</div>
+  </div>
+  <div class="meta contact"><b>www.prayatnam247.com</b><br>Contact: <b>8115749450</b></div>
+</header>
+
+<div class="layout">
+<section class="card">
+  <h2>Object Motion</h2>
+  <canvas id="motionCanvas" width="760" height="330"></canvas>
+
+  <div class="controls">
+    <select id="mode">
+      <option value="constant">Constant Velocity</option>
+      <option value="accelerate">Uniform Acceleration</option>
+      <option value="decelerate">Uniform Deceleration</option>
+      <option value="reverse">Direction Reversal</option>
+      <option value="rest">At Rest</option>
+    </select>
+    <button id="play">▶ Play</button>
+    <button id="pause" class="secondary">⏸ Pause</button>
+    <button id="reset" class="warn">↺ Reset</button>
+  </div>
+
+  <div class="sliderbox">
+    <label for="progress"><b>Journey Time</b> — drag to inspect any instant</label>
+    <input id="progress" type="range" min="0" max="1000" value="0">
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="label">Time</div><div class="value time" id="timeVal">0.0 s</div></div>
+    <div class="metric"><div class="label">Velocity</div><div class="value velocity" id="velVal">0.0 m/s</div></div>
+    <div class="metric"><div class="label">Acceleration</div><div class="value accel" id="accVal">0.0 m/s²</div></div>
+    <div class="metric"><div class="label">Displacement</div><div class="value disp" id="dispVal">0.0 m</div></div>
+  </div>
+
+  <div class="info" id="motionInfo">
+    Constant velocity means acceleration is zero.
+  </div>
+</section>
+
+<section class="card">
+  <h2>Live Velocity–Time Graph</h2>
+  <canvas id="graphCanvas" width="620" height="465"></canvas>
+  <div class="info">
+    <span class="key">Horizontal axis:</span> Time (s)<br>
+    <span class="key">Vertical axis:</span> Velocity (m/s)<br><br>
+    <b>Slope of v–t graph = acceleration.</b><br>
+    <b>Area under v–t graph = displacement.</b><br><br>
+    Horizontal line → constant velocity.<br>
+    Upward slope → positive acceleration.<br>
+    Downward slope → negative acceleration.
+  </div>
+</section>
+</div>
+
+<section class="examples">
+  <b>Explore five graph patterns:</b>
+  <div class="exgrid">
+    <div class="ex" data-mode="rest"><b>At Rest</b><br>Velocity stays zero. Graph lies on time axis.</div>
+    <div class="ex" data-mode="constant"><b>Constant Velocity</b><br>Horizontal line above the time axis.</div>
+    <div class="ex" data-mode="accelerate"><b>Acceleration</b><br>Velocity increases linearly with time.</div>
+    <div class="ex" data-mode="decelerate"><b>Deceleration</b><br>Velocity decreases steadily.</div>
+    <div class="ex" data-mode="reverse"><b>Direction Reversal</b><br>Velocity crosses zero and becomes negative.</div>
+  </div>
+</section>
+
+<footer>Prayatnam Academy Palam • www.prayatnam247.com • 8115749450</footer>
+</div>
+
+<script>
+const mc=document.getElementById('motionCanvas'),mctx=mc.getContext('2d');
+const gc=document.getElementById('graphCanvas'),gctx=gc.getContext('2d');
+const mode=document.getElementById('mode'),progress=document.getElementById('progress');
+const timeVal=document.getElementById('timeVal'),velVal=document.getElementById('velVal'),
+      accVal=document.getElementById('accVal'),dispVal=document.getElementById('dispVal'),
+      info=document.getElementById('motionInfo');
+
+const TOTAL_T=10;
+let running=false,last=null;
+
+function stateAt(t,m){
+  if(m==='rest') return {v:0,a:0,x:0};
+  if(m==='constant') return {v:6,a:0,x:6*t};
+  if(m==='accelerate'){
+    const a=1.5,u=0;
+    return {v:u+a*t,a,x:u*t+0.5*a*t*t};
+  }
+  if(m==='decelerate'){
+    const u=15,a=-1.2;
+    return {v:u+a*t,a,x:u*t+0.5*a*t*t};
+  }
+  const u=10,a=-2;
+  return {v:u+a*t,a,x:u*t+0.5*a*t*t};
+}
+
+function desc(m){
+  return {
+    rest:'The object is at rest. Velocity and acceleration are both zero.',
+    constant:'The velocity is constant, so the velocity–time graph is horizontal and acceleration is zero.',
+    accelerate:'Velocity rises uniformly with time. The positive slope represents constant positive acceleration.',
+    decelerate:'Velocity decreases uniformly. The negative slope represents constant negative acceleration.',
+    reverse:'Velocity decreases to zero and then becomes negative, showing that the object has reversed direction.'
+  }[m];
+}
+
+function drawMotion(t){
+  const s=stateAt(t,mode.value);
+  mctx.clearRect(0,0,mc.width,mc.height);
+
+  mctx.strokeStyle='#203653';mctx.lineWidth=1;
+  for(let x=0;x<mc.width;x+=40){mctx.beginPath();mctx.moveTo(x,0);mctx.lineTo(x,mc.height);mctx.stroke()}
+  for(let y=0;y<mc.height;y+=40){mctx.beginPath();mctx.moveTo(0,y);mctx.lineTo(mc.width,y);mctx.stroke()}
+
+  const roadY=220;
+  mctx.strokeStyle='#9bacc0';mctx.lineWidth=4;
+  mctx.beginPath();mctx.moveTo(55,roadY);mctx.lineTo(705,roadY);mctx.stroke();
+
+  const px=380+Math.max(-50,Math.min(50,s.x-30))*5.5;
+  mctx.fillStyle='#5bd4ff';mctx.fillRect(px-28,roadY-48,56,34);
+  mctx.fillStyle='#07111f';
+  mctx.beginPath();mctx.arc(px-17,roadY-9,8,0,Math.PI*2);mctx.fill();
+  mctx.beginPath();mctx.arc(px+17,roadY-9,8,0,Math.PI*2);mctx.fill();
+
+  if(Math.abs(s.v)>0.1){
+    const sign=Math.sign(s.v),len=Math.min(125,Math.abs(s.v)*8),x2=px+sign*len,y=roadY-88;
+    mctx.strokeStyle='#ffd166';mctx.fillStyle='#ffd166';mctx.lineWidth=4;
+    mctx.beginPath();mctx.moveTo(px,y);mctx.lineTo(x2,y);mctx.stroke();
+    mctx.beginPath();mctx.moveTo(x2,y);mctx.lineTo(x2-sign*12,y-6);mctx.lineTo(x2-sign*12,y+6);mctx.closePath();mctx.fill();
+    mctx.font='bold 14px Arial';mctx.fillText('velocity',sign>0?px+6:x2+6,y-10);
+  }
+
+  mctx.fillStyle='#fff';mctx.font='bold 15px Arial';mctx.fillText('Object',px-24,roadY-58);
+  mctx.fillStyle='#b8c7d9';mctx.font='14px Arial';
+  mctx.fillText('← Negative direction',65,285);
+  mctx.fillText('Positive direction →',565,285);
+
+  timeVal.textContent=t.toFixed(1)+' s';
+  velVal.textContent=s.v.toFixed(1)+' m/s';
+  accVal.textContent=s.a.toFixed(1)+' m/s²';
+  dispVal.textContent=s.x.toFixed(1)+' m';
+  info.textContent=desc(mode.value);
+}
+
+function drawGraph(tNow){
+  gctx.clearRect(0,0,gc.width,gc.height);
+  const left=65,right=585,top=35,bottom=410,w=right-left,h=bottom-top;
+  const vMin=-12,vMax=18;
+
+  gctx.strokeStyle='#29405f';gctx.lineWidth=1;
+  for(let i=0;i<=10;i++){
+    const x=left+(i/10)*w;
+    gctx.beginPath();gctx.moveTo(x,top);gctx.lineTo(x,bottom);gctx.stroke();
+    gctx.fillStyle='#b8c7d9';gctx.font='12px Arial';gctx.fillText(i,x-4,bottom+20);
+  }
+  for(let v=-10;v<=15;v+=5){
+    const y=bottom-((v-vMin)/(vMax-vMin))*h;
+    gctx.beginPath();gctx.moveTo(left,y);gctx.lineTo(right,y);gctx.stroke();
+    gctx.fillStyle='#b8c7d9';gctx.fillText(v,left-36,y+4);
+  }
+
+  const zeroY=bottom-((0-vMin)/(vMax-vMin))*h;
+  gctx.strokeStyle='#d9e1ec';gctx.lineWidth=2;
+  gctx.beginPath();gctx.moveTo(left,top);gctx.lineTo(left,bottom);gctx.stroke();
+  gctx.beginPath();gctx.moveTo(left,zeroY);gctx.lineTo(right,zeroY);gctx.stroke();
+
+  gctx.fillStyle='#fff';gctx.font='bold 14px Arial';
+  gctx.fillText('Time (s)',300,450);
+  gctx.save();gctx.translate(18,255);gctx.rotate(-Math.PI/2);gctx.fillText('Velocity (m/s)',0,0);gctx.restore();
+
+  // area under curve to current time
+  gctx.beginPath();
+  const steps=140;
+  for(let i=0;i<=steps;i++){
+    const t=(tNow/steps)*i;
+    const s=stateAt(t,mode.value);
+    const x=left+(t/TOTAL_T)*w;
+    const y=bottom-((Math.max(vMin,Math.min(vMax,s.v))-vMin)/(vMax-vMin))*h;
+    if(i===0) gctx.moveTo(x,zeroY);
+    gctx.lineTo(x,y);
+  }
+  const endX=left+(tNow/TOTAL_T)*w;
+  gctx.lineTo(endX,zeroY);
+  gctx.closePath();
+  gctx.fillStyle='rgba(126,226,168,.16)';
+  gctx.fill();
+
+  // velocity line
+  gctx.strokeStyle='#ffd166';gctx.lineWidth=4;gctx.lineJoin='round';
+  gctx.beginPath();
+  for(let i=0;i<=steps;i++){
+    const t=(tNow/steps)*i;
+    const s=stateAt(t,mode.value);
+    const x=left+(t/TOTAL_T)*w;
+    const y=bottom-((Math.max(vMin,Math.min(vMax,s.v))-vMin)/(vMax-vMin))*h;
+    if(i===0)gctx.moveTo(x,y);else gctx.lineTo(x,y);
+  }
+  gctx.stroke();
+
+  const now=stateAt(tNow,mode.value);
+  const cx=left+(tNow/TOTAL_T)*w;
+  const cy=bottom-((Math.max(vMin,Math.min(vMax,now.v))-vMin)/(vMax-vMin))*h;
+  gctx.fillStyle='#5bd4ff';gctx.beginPath();gctx.arc(cx,cy,6,0,Math.PI*2);gctx.fill();
+
+  gctx.fillStyle='#b8c7d9';gctx.font='13px Arial';
+  gctx.fillText('Slope = acceleration',right-145,top+16);
+  gctx.fillText('Shaded area = displacement',right-170,top+36);
+}
+
+function draw(){
+  const t=(+progress.value/1000)*TOTAL_T;
+  drawMotion(t);drawGraph(t);
+}
+
+function animate(ts){
+  if(!running)return;
+  if(last===null)last=ts;
+  const dt=ts-last;last=ts;
+  let v=+progress.value+dt*0.08;
+  if(v>=1000){v=1000;running=false}
+  progress.value=v;draw();
+  if(running)requestAnimationFrame(animate);
+}
+
+document.getElementById('play').addEventListener('click',()=>{
+  if(+progress.value>=1000)progress.value=0;
+  running=true;last=null;requestAnimationFrame(animate);
+});
+document.getElementById('pause').addEventListener('click',()=>{running=false;last=null});
+document.getElementById('reset').addEventListener('click',()=>{running=false;last=null;progress.value=0;draw()});
+progress.addEventListener('input',draw);
+mode.addEventListener('change',()=>{running=false;last=null;progress.value=0;draw()});
+
+document.querySelectorAll('.ex').forEach(el=>el.addEventListener('click',()=>{
+  mode.value=el.dataset.mode;running=false;last=null;progress.value=0;draw();
+}));
+
+draw();
+</script>
+</body>
+</html>
