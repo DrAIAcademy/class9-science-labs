@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Distance vs Displacement Simulator</title>
+<style>
+  :root{
+    --bg:#08111f;
+    --panel:#101c2f;
+    --panel2:#15243b;
+    --text:#f4f7fb;
+    --muted:#a9b7ca;
+    --accent:#5dd4ff;
+    --accent2:#8df0b3;
+    --warn:#ffd166;
+    --danger:#ff7a90;
+    --grid:#20314b;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:linear-gradient(135deg,#07101d,#0b1730 55%,#07101d);
+    color:var(--text);
+    min-height:100vh;
+  }
+  .app{
+    max-width:1200px;
+    margin:auto;
+    padding:24px;
+  }
+  h1{
+    margin:0 0 8px;
+    font-size:clamp(28px,4vw,48px);
+    line-height:1.05;
+  }
+  .sub{
+    color:var(--muted);
+    margin-bottom:20px;
+    font-size:16px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:18px;
+  }
+  .card{
+    background:rgba(16,28,47,.92);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    box-shadow:0 16px 45px rgba(0,0,0,.25);
+  }
+  .sim{
+    padding:16px;
+  }
+  canvas{
+    width:100%;
+    aspect-ratio:16/9;
+    display:block;
+    border-radius:14px;
+    background:#091525;
+    border:1px solid rgba(255,255,255,.06);
+  }
+  .controls{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-top:14px;
+  }
+  button,select,input[type=range]{
+    width:100%;
+  }
+  button, select{
+    border:0;
+    border-radius:12px;
+    padding:11px 12px;
+    font-weight:700;
+  }
+  button{
+    cursor:pointer;
+    background:var(--accent);
+    color:#04111c;
+  }
+  button.secondary{background:#223651;color:var(--text)}
+  button.warn{background:var(--warn);color:#281d00}
+  .side{
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .stat{
+    padding:16px;
+    background:var(--panel2);
+    border-radius:14px;
+  }
+  .stat .label{
+    color:var(--muted);
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+  }
+  .stat .value{
+    font-size:30px;
+    font-weight:800;
+    margin-top:4px;
+  }
+  .distance{color:var(--warn)}
+  .displacement{color:var(--accent2)}
+  .mini{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:6px;
+  }
+  .explain{
+    padding:16px;
+    background:rgba(255,255,255,.04);
+    border-radius:14px;
+    line-height:1.55;
+  }
+  .formula{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    background:#07101d;
+    border-radius:10px;
+    padding:10px 12px;
+    margin-top:10px;
+    overflow:auto;
+  }
+  .row{
+    display:grid;
+    grid-template-columns:160px 1fr;
+    align-items:center;
+    gap:12px;
+  }
+  .row label{color:var(--muted)}
+  .sliderWrap{
+    margin-top:12px;
+    padding:14px;
+    background:rgba(255,255,255,.035);
+    border-radius:14px;
+  }
+  input[type=range]{
+    accent-color:var(--accent);
+  }
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:10px;
+    color:var(--muted);
+    font-size:13px;
+  }
+  .dot{
+    display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;
+  }
+  .footer{
+    margin-top:18px;
+    color:var(--muted);
+    text-align:center;
+    font-size:13px;
+  }
+  @media(max-width:850px){
+    .grid{grid-template-columns:1fr}
+    .controls{grid-template-columns:1fr 1fr}
+    .row{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Distance vs Displacement Simulator</h1>
+  <div class="sub">Move the object and compare the <b>total path travelled</b> with the <b>straight-line change in position</b>.</div>
+
+  <div class="grid">
+    <div class="card sim">
+      <canvas id="canvas" width="960" height="540"></canvas>
+
+      <div class="controls">
+        <select id="scenario">
+          <option value="direct">Direct Path</option>
+          <option value="detour">Detour Path</option>
+          <option value="roundtrip">Round Trip</option>
+        </select>
+        <button id="play">▶ Play</button>
+        <button id="pause" class="secondary">⏸ Pause</button>
+        <button id="reset" class="warn">↺ Reset</button>
+      </div>
+
+      <div class="sliderWrap">
+        <div class="row">
+          <label for="progress"><b>Journey progress</b></label>
+          <input id="progress" type="range" min="0" max="1000" value="0"/>
+        </div>
+        <div class="legend">
+          <span><span class="dot" style="background:#ffd166"></span>Distance travelled</span>
+          <span><span class="dot" style="background:#8df0b3"></span>Displacement</span>
+          <span><span class="dot" style="background:#5dd4ff"></span>Moving object</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card side">
+      <div class="stat">
+        <div class="label">Distance travelled</div>
+        <div class="value distance" id="distanceVal">0.0 m</div>
+        <div class="mini">Complete length of the path covered.</div>
+      </div>
+
+      <div class="stat">
+        <div class="label">Displacement magnitude</div>
+        <div class="value displacement" id="dispVal">0.0 m</div>
+        <div class="mini" id="dispDir">Direction: —</div>
+      </div>
+
+      <div class="stat">
+        <div class="label">Key comparison</div>
+        <div class="value" id="comparison">Start moving</div>
+      </div>
+
+      <div class="explain">
+        <b>Distance</b> is a scalar quantity. It tells us how much ground an object has covered.
+        <div class="formula">Distance = total length of actual path</div>
+      </div>
+
+      <div class="explain">
+        <b>Displacement</b> is a vector quantity. It depends only on the starting and current positions.
+        <div class="formula">Δr = current position − starting position</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Tip: Choose <b>Round Trip</b>. At the end, distance is greater than zero but displacement becomes zero.</div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const scenarioEl = document.getElementById('scenario');
+const progressEl = document.getElementById('progress');
+const playBtn = document.getElementById('play');
+const pauseBtn = document.getElementById('pause');
+const resetBtn = document.getElementById('reset');
+const distanceVal = document.getElementById('distanceVal');
+const dispVal = document.getElementById('dispVal');
+const dispDir = document.getElementById('dispDir');
+const comparison = document.getElementById('comparison');
+
+let animating = false;
+let lastTime = null;
+
+const SCALE = 10; // pixels per meter for calculation
+
+const paths = {
+  direct: [
+    {x:120,y:360},{x:820,y:180}
+  ],
+  detour: [
+    {x:120,y:360},{x:300,y:120},{x:540,y:390},{x:820,y:180}
+  ],
+  roundtrip: [
+    {x:120,y:360},{x:820,y:180},{x:560,y:420},{x:120,y:360}
+  ]
+};
+
+function dist(a,b){
+  return Math.hypot(b.x-a.x,b.y-a.y);
+}
+
+function pathLengths(points){
+  let segs=[], total=0;
+  for(let i=0;i<points.length-1;i++){
+    const d=dist(points[i],points[i+1]);
+    segs.push(d); total+=d;
+  }
+  return {segs,total};
+}
+
+function pointAtProgress(points,t){
+  const {segs,total}=pathLengths(points);
+  const target=t*total;
+  let covered=0;
+  for(let i=0;i<segs.length;i++){
+    if(covered+segs[i]>=target){
+      const local=(target-covered)/segs[i];
+      return {
+        x:points[i].x+(points[i+1].x-points[i].x)*local,
+        y:points[i].y+(points[i+1].y-points[i].y)*local,
+        distancePx:target
+      };
+    }
+    covered+=segs[i];
+  }
+  const end=points[points.length-1];
+  return {x:end.x,y:end.y,distancePx:total};
+}
+
+function drawArrow(x1,y1,x2,y2,color,width=4){
+  const angle=Math.atan2(y2-y1,x2-x1);
+  ctx.strokeStyle=color;
+  ctx.fillStyle=color;
+  ctx.lineWidth=width;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const head=14;
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(angle-Math.PI/6),y2-head*Math.sin(angle-Math.PI/6));
+  ctx.lineTo(x2-head*Math.cos(angle+Math.PI/6),y2-head*Math.sin(angle+Math.PI/6));
+  ctx.closePath(); ctx.fill();
+}
+
+function drawGrid(){
+  ctx.strokeStyle='#20314b';
+  ctx.lineWidth=1;
+  for(let x=0;x<=canvas.width;x+=40){
+    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();
+  }
+  for(let y=0;y<=canvas.height;y+=40){
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();
+  }
+}
+
+function draw(){
+  const points=paths[scenarioEl.value];
+  const p=Number(progressEl.value)/1000;
+  const current=pointAtProgress(points,p);
+  const start=points[0];
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawGrid();
+
+  // full route
+  ctx.strokeStyle='rgba(255,255,255,.18)';
+  ctx.lineWidth=8;
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  ctx.beginPath();
+  ctx.moveTo(points[0].x,points[0].y);
+  for(let i=1;i<points.length;i++) ctx.lineTo(points[i].x,points[i].y);
+  ctx.stroke();
+
+  // travelled route
+  const {segs,total}=pathLengths(points);
+  let target=p*total, covered=0;
+  ctx.strokeStyle='#ffd166';
+  ctx.lineWidth=8;
+  ctx.beginPath();
+  ctx.moveTo(points[0].x,points[0].y);
+  for(let i=0;i<segs.length;i++){
+    if(covered+segs[i] <= target){
+      ctx.lineTo(points[i+1].x,points[i+1].y);
+      covered+=segs[i];
+    }else{
+      const local=Math.max(0,(target-covered)/segs[i]);
+      ctx.lineTo(
+        points[i].x+(points[i+1].x-points[i].x)*local,
+        points[i].y+(points[i+1].y-points[i].y)*local
+      );
+      break;
+    }
+  }
+  ctx.stroke();
+
+  // displacement
+  if(p>0.001){
+    drawArrow(start.x,start.y,current.x,current.y,'#8df0b3',4);
+  }
+
+  // markers
+  ctx.fillStyle='#ffffff';
+  ctx.beginPath();ctx.arc(start.x,start.y,8,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#a9b7ca';
+  ctx.font='bold 16px system-ui';
+  ctx.fillText('Start',start.x-18,start.y+28);
+
+  const end=points[points.length-1];
+  ctx.fillStyle='#ffffff';
+  ctx.beginPath();ctx.arc(end.x,end.y,8,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#a9b7ca';
+  ctx.fillText('Final Point',end.x-35,end.y-18);
+
+  // moving object
+  ctx.shadowBlur=24;
+  ctx.shadowColor='#5dd4ff';
+  ctx.fillStyle='#5dd4ff';
+  ctx.beginPath();ctx.arc(current.x,current.y,15,0,Math.PI*2);ctx.fill();
+  ctx.shadowBlur=0;
+
+  ctx.fillStyle='#ffffff';
+  ctx.font='bold 17px system-ui';
+  ctx.fillText('Object',current.x+20,current.y-18);
+
+  // stats
+  const distanceM=current.distancePx/SCALE;
+  const dx=(current.x-start.x)/SCALE;
+  const dy=(start.y-current.y)/SCALE; // up as positive
+  const dispM=Math.hypot(dx,dy);
+
+  distanceVal.textContent=distanceM.toFixed(1)+' m';
+  dispVal.textContent=dispM.toFixed(1)+' m';
+
+  if(dispM < 0.05){
+    dispDir.textContent='Direction: none (back at start)';
+  }else{
+    const ang=Math.atan2(dy,dx)*180/Math.PI;
+    let dir='';
+    if(ang>=-22.5 && ang<22.5) dir='East';
+    else if(ang>=22.5 && ang<67.5) dir='North-East';
+    else if(ang>=67.5 && ang<112.5) dir='North';
+    else if(ang>=112.5 && ang<157.5) dir='North-West';
+    else if(ang>=157.5 || ang<-157.5) dir='West';
+    else if(ang>=-157.5 && ang<-112.5) dir='South-West';
+    else if(ang>=-112.5 && ang<-67.5) dir='South';
+    else dir='South-East';
+    dispDir.textContent='Direction: '+dir;
+  }
+
+  if(distanceM < 0.05){
+    comparison.textContent='Start moving';
+  } else if(Math.abs(distanceM-dispM) < 0.1){
+    comparison.textContent='Distance = Displacement';
+  } else if(dispM < 0.1){
+    comparison.textContent='Distance > 0, Displacement = 0';
+  } else {
+    comparison.textContent='Distance > Displacement';
+  }
+}
+
+function animate(ts){
+  if(!animating) return;
+  if(lastTime===null) lastTime=ts;
+  const dt=ts-lastTime;
+  lastTime=ts;
+  let v=Number(progressEl.value) + dt*0.09;
+  if(v>=1000){
+    v=1000;
+    animating=false;
+  }
+  progressEl.value=v;
+  draw();
+  if(animating) requestAnimationFrame(animate);
+}
+
+progressEl.addEventListener('input',draw);
+scenarioEl.addEventListener('change',()=>{
+  progressEl.value=0;
+  animating=false;
+  lastTime=null;
+  draw();
+});
+playBtn.addEventListener('click',()=>{
+  if(Number(progressEl.value)>=1000) progressEl.value=0;
+  animating=true;
+  lastTime=null;
+  requestAnimationFrame(animate);
+});
+pauseBtn.addEventListener('click',()=>{animating=false;lastTime=null;});
+resetBtn.addEventListener('click',()=>{
+  animating=false;
+  lastTime=null;
+  progressEl.value=0;
+  draw();
+});
+
+draw();
+</script>
+</body>
+</html>
