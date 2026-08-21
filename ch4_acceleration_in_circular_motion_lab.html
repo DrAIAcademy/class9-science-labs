@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noarchive">
+<title>Acceleration in Circular Motion Lab | Prayatnam Academy</title>
+<style>
+:root{
+  --bg:#07111f;--panel:#10213a;--panel2:#18304d;--text:#f7f9fc;--muted:#b8c7d9;
+  --cyan:#5bd4ff;--yellow:#ffd166;--green:#7ee2a8;--red:#ff8498;--grid:#29405f;
+}
+*{box-sizing:border-box;-webkit-user-select:none;user-select:none}
+body{
+  margin:0;font-family:Inter,Arial,sans-serif;
+  background:linear-gradient(135deg,#06101d,#0a1830 60%,#07111f);color:var(--text)
+}
+.wrap{max-width:1180px;margin:auto;padding:20px}
+header{
+  display:flex;justify-content:space-between;gap:16px;align-items:center;
+  background:var(--panel);border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;padding:18px;margin-bottom:16px
+}
+h1{margin:0;font-size:clamp(28px,4vw,42px)}
+.brand{color:var(--yellow)}
+.meta{color:var(--muted);line-height:1.6;font-size:14px}.contact{text-align:right}
+.layout{display:grid;grid-template-columns:1.35fr .85fr;gap:16px}
+.card{
+  background:rgba(16,33,58,.96);border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;padding:16px
+}
+h2{margin:0 0 12px;font-size:20px}
+canvas{
+  width:100%;aspect-ratio:16/9;background:#081728;
+  border-radius:13px;border:1px solid rgba(255,255,255,.07);display:block
+}
+.controls{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.control{background:rgba(255,255,255,.04);padding:12px;border-radius:12px}
+label{display:block;color:var(--muted);font-size:13px;margin-bottom:7px}
+input[type=range]{width:100%;accent-color:var(--cyan)}
+.read{font-size:17px;font-weight:800;margin-top:5px}
+.buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+button{
+  border:0;border-radius:11px;padding:10px;font:inherit;font-weight:800;
+  cursor:pointer;background:var(--cyan);color:#06131d
+}
+.secondary{background:#29415f;color:#fff}.warn{background:var(--yellow);color:#2b2100}
+.metric{background:var(--panel2);padding:14px;border-radius:12px;margin-bottom:10px}
+.metric .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.metric .value{font-size:25px;font-weight:800;margin-top:5px}
+.r{color:var(--cyan)}.v{color:var(--yellow)}.a{color:var(--green)}.dir{color:var(--red)}
+.info{margin-top:12px;background:#0b1728;border-radius:11px;padding:13px;line-height:1.55}
+.formula{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  background:#07111f;padding:10px;border-radius:8px;margin-top:7px;
+  text-align:center;color:var(--yellow);font-size:20px
+}
+.steps{
+  margin-top:16px;background:var(--panel);border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;padding:16px
+}
+.stepgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.step{background:var(--panel2);padding:12px;border-radius:11px;min-height:110px}
+.step b{color:var(--yellow)}
+footer{text-align:center;color:var(--muted);padding:16px 4px 2px;font-size:13px}
+.secure-note{font-size:12px;color:#8ea1b8;text-align:center;margin-top:8px}
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}.controls,.stepgrid{grid-template-columns:1fr 1fr}
+  header{flex-direction:column;align-items:flex-start}.contact{text-align:left}
+}
+</style>
+</head>
+<body oncontextmenu="return false">
+<div class="wrap">
+
+<header>
+  <div>
+    <h1><span class="brand">Prayatnam Academy</span><br>Acceleration in Circular Motion Lab</h1>
+    <div class="meta">Explore why an object moving at constant speed in a circle still has acceleration.</div>
+  </div>
+  <div class="meta contact">
+    <b>www.prayatnam247.com</b><br>
+    Contact: <b>8115749450</b>
+  </div>
+</header>
+
+<div class="layout">
+<section class="card">
+  <h2>Interactive Centripetal Acceleration Simulator</h2>
+  <canvas id="scene" width="860" height="480"></canvas>
+
+  <div class="controls">
+    <div class="control">
+      <label for="radius">Radius, r (m)</label>
+      <input id="radius" type="range" min="1" max="10" step="0.5" value="5">
+      <div class="read" id="radiusRead">5.0 m</div>
+    </div>
+    <div class="control">
+      <label for="speed">Speed, v (m/s)</label>
+      <input id="speed" type="range" min="1" max="20" step="1" value="8">
+      <div class="read" id="speedRead">8 m/s</div>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button id="play">▶ Start</button>
+    <button id="pause" class="secondary">⏸ Pause</button>
+    <button id="reset" class="warn">↺ Reset</button>
+  </div>
+</section>
+
+<aside class="card">
+  <div class="metric"><div class="label">Radius</div><div class="value r" id="radiusVal">5.0 m</div></div>
+  <div class="metric"><div class="label">Speed</div><div class="value v" id="speedVal">8.0 m/s</div></div>
+  <div class="metric"><div class="label">Centripetal Acceleration</div><div class="value a" id="accVal">12.8 m/s²</div></div>
+  <div class="metric"><div class="label">Acceleration Direction</div><div class="value dir">Toward Centre</div></div>
+
+  <div class="info">
+    <b>Centripetal Acceleration</b><br>
+    Even when speed is constant, velocity changes because direction changes. Therefore the object has acceleration directed toward the centre.
+    <div class="formula">a<sub>c</sub> = v² / r</div>
+  </div>
+
+  <div class="info" id="concept">
+    Increase speed and acceleration rises rapidly because speed is squared. Increase radius and acceleration decreases.
+  </div>
+</aside>
+</div>
+
+<section class="steps">
+  <b>Key ideas:</b>
+  <div class="stepgrid">
+    <div class="step"><b>1. Constant Speed</b><br><br>The speed may remain unchanged during uniform circular motion.</div>
+    <div class="step"><b>2. Changing Direction</b><br><br>Velocity changes continuously because its direction changes.</div>
+    <div class="step"><b>3. Inward Acceleration</b><br><br>Centripetal acceleration always points toward the centre.</div>
+    <div class="step"><b>4. Formula Effect</b><br><br><b>a₍c₎ ∝ v²</b> and <b>a₍c₎ ∝ 1/r</b>.</div>
+  </div>
+</section>
+
+<footer>
+  Prayatnam Academy • www.prayatnam247.com • 8115749450
+  <div class="secure-note">Interactive educational simulator</div>
+</footer>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const c=document.getElementById('scene'),ctx=c.getContext('2d');
+  const radius=document.getElementById('radius'),
+        speed=document.getElementById('speed');
+
+  const radiusRead=document.getElementById('radiusRead'),
+        speedRead=document.getElementById('speedRead'),
+        radiusVal=document.getElementById('radiusVal'),
+        speedVal=document.getElementById('speedVal'),
+        accVal=document.getElementById('accVal');
+
+  let running=false;
+  let angle=0;
+  let last=null;
+
+  function state(){
+    const r=+radius.value,v=+speed.value;
+    return {r,v,ac:(v*v)/r,omega:v/r};
+  }
+
+  function arrow(x1,y1,x2,y2,color,label){
+    const a=Math.atan2(y2-y1,x2-x1);
+    ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=4;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+
+    const h=12;
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-h*Math.cos(a-.45),y2-h*Math.sin(a-.45));
+    ctx.lineTo(x2-h*Math.cos(a+.45),y2-h*Math.sin(a+.45));
+    ctx.closePath();ctx.fill();
+
+    ctx.font='bold 14px Arial';
+    ctx.fillText(label,(x1+x2)/2+7,(y1+y2)/2-8);
+  }
+
+  function draw(){
+    const q=state();
+
+    radiusRead.textContent=q.r.toFixed(1)+' m';
+    speedRead.textContent=q.v.toFixed(0)+' m/s';
+    radiusVal.textContent=q.r.toFixed(1)+' m';
+    speedVal.textContent=q.v.toFixed(1)+' m/s';
+    accVal.textContent=q.ac.toFixed(2)+' m/s²';
+
+    ctx.clearRect(0,0,c.width,c.height);
+
+    ctx.strokeStyle='#203653';ctx.lineWidth=1;
+    for(let x=0;x<c.width;x+=40){
+      ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke();
+    }
+    for(let y=0;y<c.height;y+=40){
+      ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();
+    }
+
+    const cx=430,cy=245;
+    const visualR=95+q.r*13;
+
+    ctx.strokeStyle='#66809f';ctx.lineWidth=3;
+    ctx.beginPath();ctx.arc(cx,cy,visualR,0,Math.PI*2);ctx.stroke();
+
+    ctx.fillStyle='#fff';
+    ctx.beginPath();ctx.arc(cx,cy,7,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#b8c7d9';ctx.font='14px Arial';
+    ctx.fillText('Centre',cx-22,cy+24);
+
+    const ox=cx+visualR*Math.cos(angle);
+    const oy=cy+visualR*Math.sin(angle);
+
+    ctx.strokeStyle='#5bd4ff';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(ox,oy);ctx.stroke();
+
+    ctx.fillStyle='#5bd4ff';
+    ctx.beginPath();ctx.arc(ox,oy,14,0,Math.PI*2);ctx.fill();
+
+    ctx.fillStyle='#fff';ctx.font='bold 14px Arial';
+    ctx.fillText('Object',ox+18,oy-8);
+
+    // tangent velocity
+    const tx=-Math.sin(angle),ty=Math.cos(angle);
+    const vLen=55+q.v*4;
+    arrow(ox,oy,ox+tx*vLen,oy+ty*vLen,'#ffd166','velocity');
+
+    // inward acceleration
+    const dx=cx-ox,dy=cy-oy;
+    const mag=Math.hypot(dx,dy),ux=dx/mag,uy=dy/mag;
+    const aLen=Math.min(145,45+q.ac*4);
+    arrow(ox,oy,ox+ux*aLen,oy+uy*aLen,'#7ee2a8','centripetal acceleration');
+
+    ctx.fillStyle='#ffd166';ctx.font='bold 20px Arial';
+    ctx.fillText('aᶜ = v² / r',365,48);
+
+    ctx.fillStyle='#b8c7d9';ctx.font='14px Arial';
+    ctx.fillText('Yellow arrow = tangential velocity',55,440);
+    ctx.fillText('Green arrow = inward acceleration',570,440);
+  }
+
+  function animate(ts){
+    if(!running)return;
+    if(last===null)last=ts;
+    const dt=(ts-last)/1000;
+    last=ts;
+
+    const q=state();
+    angle += q.omega*dt;
+
+    draw();
+    requestAnimationFrame(animate);
+  }
+
+  document.getElementById('play').addEventListener('click',()=>{
+    if(!running){
+      running=true;
+      last=null;
+      requestAnimationFrame(animate);
+    }
+  });
+
+  document.getElementById('pause').addEventListener('click',()=>{
+    running=false;
+    last=null;
+  });
+
+  document.getElementById('reset').addEventListener('click',()=>{
+    running=false;
+    last=null;
+    angle=0;
+    draw();
+  });
+
+  [radius,speed].forEach(el=>el.addEventListener('input',draw));
+
+  // Basic copy/source-view deterrents
+  document.addEventListener('copy',e=>e.preventDefault());
+  document.addEventListener('cut',e=>e.preventDefault());
+  document.addEventListener('dragstart',e=>e.preventDefault());
+  document.addEventListener('keydown',e=>{
+    const k=e.key.toLowerCase();
+    if(
+      (e.ctrlKey && ['c','u','s','a','p'].includes(k)) ||
+      (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)) ||
+      e.key==='F12'
+    ){
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  });
+
+  draw();
+})();
+</script>
+</body>
+</html>

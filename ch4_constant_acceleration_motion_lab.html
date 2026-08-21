@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Motion with Constant Acceleration | Prayatnam Academy</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#07111f;color:#fff}
+.wrap{max-width:1100px;margin:auto;padding:20px}
+header,.card,.preset{background:#10213a;border-radius:16px;padding:18px;margin-bottom:16px}
+header{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{margin:0}.brand{color:#ffd166}.muted{color:#b8c7d9;line-height:1.6}
+.grid{display:grid;grid-template-columns:1.4fr .8fr;gap:16px}
+canvas{width:100%;aspect-ratio:16/7;background:#081728;border-radius:12px;display:block}
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.control,.metric,.info{background:#18304d;padding:12px;border-radius:12px}
+input[type=range]{width:100%}
+.buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+button{padding:10px;border:0;border-radius:10px;font-weight:700;cursor:pointer;background:#5bd4ff}
+button:nth-child(2){background:#29415f;color:#fff}button:nth-child(3){background:#ffd166}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.value{font-size:25px;font-weight:bold;margin-top:4px}.label{font-size:12px;color:#b8c7d9}
+.info{margin-top:10px;line-height:1.55}.formula{background:#07111f;padding:8px;border-radius:8px;margin-top:7px;font-family:monospace}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.p{background:#18304d;padding:12px;border-radius:10px;cursor:pointer}.p b{color:#ffd166}
+footer{text-align:center;color:#b8c7d9;font-size:13px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.controls,.pgrid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div><h1><span class="brand">Prayatnam Academy Palam</span><br>Motion with Constant Acceleration Lab</h1>
+<div class="muted">Explore motion when acceleration remains constant.</div></div>
+<div class="muted"><b>www.prayatnam247.com</b><br>Contact: <b>8115749450</b></div>
+</header>
+
+<div class="grid">
+<section class="card">
+<canvas id="c" width="900" height="394"></canvas>
+
+<div class="controls">
+<div class="control"><label>Initial Velocity u (m/s)</label><input id="u" type="range" min="-10" max="20" step="1" value="2"><div id="ur">2 m/s</div></div>
+<div class="control"><label>Constant Acceleration a (m/s²)</label><input id="a" type="range" min="-5" max="5" step=".5" value="1"><div id="ar">1.0 m/s²</div></div>
+<div class="control"><label>Total Time (s)</label><input id="T" type="range" min="2" max="20" step="1" value="10"><div id="Tr">10 s</div></div>
+</div>
+
+<div class="buttons"><button id="play">▶ Start</button><button id="pause">⏸ Pause</button><button id="reset">↺ Reset</button></div>
+<div class="control" style="margin-top:12px"><label>Scrub Time</label><input id="time" type="range" min="0" max="1000" value="0"></div>
+</section>
+
+<aside class="card">
+<div class="metrics">
+<div class="metric"><div class="label">Time</div><div class="value" id="tv">0.0 s</div></div>
+<div class="metric"><div class="label">Velocity</div><div class="value" id="vv">2.0 m/s</div></div>
+<div class="metric"><div class="label">Acceleration</div><div class="value" id="av">1.0 m/s²</div></div>
+<div class="metric"><div class="label">Displacement</div><div class="value" id="sv">0.0 m</div></div>
+</div>
+<div class="info"><b>Equations of Motion</b>
+<div class="formula">v = u + at</div>
+<div class="formula">s = ut + ½at²</div>
+<div class="formula">v² = u² + 2as</div>
+</div>
+<div class="info" id="concept">Positive acceleration in the direction of velocity makes the object speed up.</div>
+</aside>
+</div>
+
+<section class="preset">
+<b>Preset Experiments</b>
+<div class="pgrid">
+<div class="p" data-u="0" data-a="2"><b>Start from Rest</b><br>u = 0, a = +2</div>
+<div class="p" data-u="5" data-a="1"><b>Speeding Up</b><br>u and a same direction</div>
+<div class="p" data-u="15" data-a="-2"><b>Slowing Down</b><br>Acceleration opposite velocity</div>
+<div class="p" data-u="-5" data-a="-1"><b>Negative Direction</b><br>Motion to the left</div>
+</div>
+</section>
+
+<footer>Prayatnam Academy Palam • www.prayatnam247.com • 8115749450</footer>
+</div>
+
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d');
+const u=document.getElementById('u'),a=document.getElementById('a'),T=document.getElementById('T'),ts=document.getElementById('time');
+let run=false,last=null;
+function state(){let tt=(+ts.value/1000)*(+T.value),uu=+u.value,aa=+a.value;return{t:tt,u:uu,a:aa,v:uu+aa*tt,s:uu*tt+.5*aa*tt*tt}}
+function arrow(px,y,len,col,label){if(Math.abs(len)<2)return;let sg=Math.sign(len),L=Math.min(150,Math.abs(len)),x2=px+sg*L;x.strokeStyle=col;x.fillStyle=col;x.lineWidth=4;x.beginPath();x.moveTo(px,y);x.lineTo(x2,y);x.stroke();x.beginPath();x.moveTo(x2,y);x.lineTo(x2-sg*12,y-6);x.lineTo(x2-sg*12,y+6);x.closePath();x.fill();x.font='bold 14px Arial';x.fillText(label,sg>0?px+6:x2+6,y-10)}
+function draw(){
+let q=state();document.getElementById('ur').textContent=q.u+' m/s';document.getElementById('ar').textContent=q.a.toFixed(1)+' m/s²';document.getElementById('Tr').textContent=T.value+' s';
+document.getElementById('tv').textContent=q.t.toFixed(1)+' s';document.getElementById('vv').textContent=q.v.toFixed(1)+' m/s';document.getElementById('av').textContent=q.a.toFixed(1)+' m/s²';document.getElementById('sv').textContent=q.s.toFixed(1)+' m';
+let concept=document.getElementById('concept');concept.textContent=q.a===0?'Acceleration is zero, so velocity remains constant.':Math.abs(q.v)<.05?'Velocity is zero at this instant, but acceleration is still acting.':Math.sign(q.v)===Math.sign(q.a)?'Velocity and acceleration are in the same direction: object speeds up.':'Velocity and acceleration are opposite: object slows down.';
+x.clearRect(0,0,c.width,c.height);x.strokeStyle='#203653';x.lineWidth=1;
+for(let i=0;i<c.width;i+=40){x.beginPath();x.moveTo(i,0);x.lineTo(i,c.height);x.stroke()}
+for(let j=0;j<c.height;j+=40){x.beginPath();x.moveTo(0,j);x.lineTo(c.width,j);x.stroke()}
+let y=255;x.strokeStyle='#9bacc0';x.lineWidth=4;x.beginPath();x.moveTo(50,y);x.lineTo(850,y);x.stroke();
+let px=450+Math.max(-65,Math.min(65,q.s))*5.5;x.fillStyle='#5bd4ff';x.fillRect(px-30,y-50,60,36);x.fillStyle='#07111f';x.beginPath();x.arc(px-18,y-9,8,0,7);x.fill();x.beginPath();x.arc(px+18,y-9,8,0,7);x.fill();x.fillStyle='#fff';x.font='bold 15px Arial';x.fillText('Object',px-24,y-60);
+arrow(px,y-95,q.v*7,'#ffd166','velocity');arrow(px,y-140,q.a*28,'#7ee2a8','acceleration');
+x.fillStyle='#b8c7d9';x.font='14px Arial';x.fillText('← Negative direction',60,330);x.fillText('Positive direction →',680,330);
+x.fillStyle='#ffd166';x.font='bold 18px Arial';x.fillText('Constant acceleration means a remains unchanged with time',190,50)
+}
+function anim(t){if(!run)return;if(last===null)last=t;let dt=t-last;last=t,v=+ts.value+dt*.08;if(v>=1000){v=1000;run=false}ts.value=v;draw();if(run)requestAnimationFrame(anim)}
+document.getElementById('play').addEventListener('click',()=>{if(+ts.value>=1000)ts.value=0;run=true;last=null;requestAnimationFrame(anim)});
+document.getElementById('pause').addEventListener('click',()=>{run=false;last=null});
+document.getElementById('reset').addEventListener('click',()=>{run=false;last=null;ts.value=0;draw()});
+[u,a,T,ts].forEach(e=>e.addEventListener('input',()=>{if(e!==ts){run=false;last=null}draw()}));
+document.querySelectorAll('.p').forEach(e=>e.addEventListener('click',()=>{u.value=e.dataset.u;a.value=e.dataset.a;T.value=10;ts.value=0;run=false;last=null;draw()}));
+draw();
+</script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noarchive">
+<title>First Equation of Motion Lab | Prayatnam Academy</title>
+<style>
+:root{
+  --bg:#07111f;--panel:#10213a;--panel2:#18304d;--text:#f7f9fc;--muted:#b8c7d9;
+  --cyan:#5bd4ff;--yellow:#ffd166;--green:#7ee2a8;--red:#ff8498;--grid:#29405f;
+}
+*{box-sizing:border-box;-webkit-user-select:none;user-select:none}
+input,button{user-select:none}
+body{
+  margin:0;font-family:Inter,Arial,sans-serif;
+  background:linear-gradient(135deg,#06101d,#0a1830 60%,#07111f);color:var(--text)
+}
+.wrap{max-width:1180px;margin:auto;padding:20px}
+header{
+  display:flex;justify-content:space-between;gap:16px;align-items:center;
+  background:var(--panel);border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;padding:18px;margin-bottom:16px
+}
+h1{margin:0;font-size:clamp(28px,4vw,42px)}
+.brand{color:var(--yellow)}
+.meta{color:var(--muted);line-height:1.6;font-size:14px}.contact{text-align:right}
+.layout{display:grid;grid-template-columns:1.35fr .85fr;gap:16px}
+.card{
+  background:rgba(16,33,58,.96);border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;padding:16px
+}
+h2{margin:0 0 12px;font-size:20px}
+canvas{
+  width:100%;aspect-ratio:16/7;background:#081728;
+  border-radius:13px;border:1px solid rgba(255,255,255,.07);display:block
+}
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.control{background:rgba(255,255,255,.04);padding:12px;border-radius:12px}
+label{display:block;color:var(--muted);font-size:13px;margin-bottom:7px}
+input[type=range]{width:100%;accent-color:var(--cyan)}
+.read{font-size:17px;font-weight:800;margin-top:5px}
+.buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+button{
+  border:0;border-radius:11px;padding:10px;font:inherit;font-weight:800;
+  cursor:pointer;background:var(--cyan);color:#06131d
+}
+.secondary{background:#29415f;color:#fff}.warn{background:var(--yellow);color:#2b2100}
+.metric{background:var(--panel2);padding:14px;border-radius:12px;margin-bottom:10px}
+.metric .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.metric .value{font-size:27px;font-weight:800;margin-top:5px}
+.u{color:var(--cyan)}.a{color:var(--green)}.t{color:var(--yellow)}.v{color:var(--red)}
+.info{margin-top:12px;background:#0b1728;border-radius:11px;padding:13px;line-height:1.55}
+.formula{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  background:#07111f;padding:11px;border-radius:8px;margin-top:8px;
+  font-size:20px;text-align:center;color:var(--yellow)
+}
+.steps{margin-top:16px;background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px}
+.stepgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.step{background:var(--panel2);padding:12px;border-radius:11px;min-height:105px}
+.step b{color:var(--yellow)}
+footer{text-align:center;color:var(--muted);padding:16px 4px 2px;font-size:13px}
+.secure-note{font-size:12px;color:#8ea1b8;text-align:center;margin-top:8px}
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}.controls,.stepgrid{grid-template-columns:1fr 1fr}
+  header{flex-direction:column;align-items:flex-start}.contact{text-align:left}
+}
+</style>
+</head>
+<body oncontextmenu="return false">
+<div class="wrap">
+
+<header>
+  <div>
+    <h1><span class="brand">Prayatnam Academy</span><br>First Equation of Motion Lab</h1>
+    <div class="meta">Explore and verify the relationship between initial velocity, acceleration, time and final velocity.</div>
+  </div>
+  <div class="meta contact">
+    <b>www.prayatnam247.com</b><br>
+    Contact: <b>8115749450</b>
+  </div>
+</header>
+
+<div class="layout">
+<section class="card">
+  <h2>Interactive Motion Simulator</h2>
+  <canvas id="scene" width="860" height="376"></canvas>
+
+  <div class="controls">
+    <div class="control">
+      <label for="u">Initial Velocity, u (m/s)</label>
+      <input id="u" type="range" min="-10" max="20" step="1" value="2">
+      <div class="read" id="uRead">2 m/s</div>
+    </div>
+    <div class="control">
+      <label for="a">Acceleration, a (m/s²)</label>
+      <input id="a" type="range" min="-5" max="5" step="0.5" value="1">
+      <div class="read" id="aRead">1.0 m/s²</div>
+    </div>
+    <div class="control">
+      <label for="T">Time, t (s)</label>
+      <input id="T" type="range" min="1" max="20" step="1" value="10">
+      <div class="read" id="TRead">10 s</div>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button id="play">▶ Start</button>
+    <button id="pause" class="secondary">⏸ Pause</button>
+    <button id="reset" class="warn">↺ Reset</button>
+  </div>
+
+  <div class="control" style="margin-top:12px">
+    <label for="timeSlider">Observe motion at any instant</label>
+    <input id="timeSlider" type="range" min="0" max="1000" value="0">
+  </div>
+</section>
+
+<aside class="card">
+  <div class="metric"><div class="label">Initial Velocity (u)</div><div class="value u" id="uVal">2.0 m/s</div></div>
+  <div class="metric"><div class="label">Acceleration (a)</div><div class="value a" id="aVal">1.0 m/s²</div></div>
+  <div class="metric"><div class="label">Elapsed Time (t)</div><div class="value t" id="timeVal">0.0 s</div></div>
+  <div class="metric"><div class="label">Final / Current Velocity (v)</div><div class="value v" id="vVal">2.0 m/s</div></div>
+
+  <div class="info">
+    <b>First Equation of Motion</b>
+    <div class="formula">v = u + at</div>
+    <p>
+      It tells us how the velocity of an object changes when it moves with constant acceleration.
+    </p>
+  </div>
+
+  <div class="info" id="working">
+    At t = 0 s: v = u
+  </div>
+</aside>
+</div>
+
+<section class="steps">
+  <b>Understand the equation step by step:</b>
+  <div class="stepgrid">
+    <div class="step"><b>1. Initial Velocity</b><br><br><b>u</b> is the velocity at the beginning of motion.</div>
+    <div class="step"><b>2. Acceleration</b><br><br><b>a</b> tells how much velocity changes every second.</div>
+    <div class="step"><b>3. Time</b><br><br><b>t</b> tells how long acceleration acts on the object.</div>
+    <div class="step"><b>4. Final Velocity</b><br><br><b>v</b> is calculated using <b>v = u + at</b>.</div>
+  </div>
+</section>
+
+<footer>
+  Prayatnam Academy • www.prayatnam247.com • 8115749450
+  <div class="secure-note">Interactive educational simulator</div>
+</footer>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const c=document.getElementById('scene'),ctx=c.getContext('2d');
+  const u=document.getElementById('u'),a=document.getElementById('a'),
+        T=document.getElementById('T'),timeSlider=document.getElementById('timeSlider');
+
+  const uRead=document.getElementById('uRead'),aRead=document.getElementById('aRead'),
+        TRead=document.getElementById('TRead'),uVal=document.getElementById('uVal'),
+        aVal=document.getElementById('aVal'),timeVal=document.getElementById('timeVal'),
+        vVal=document.getElementById('vVal'),working=document.getElementById('working');
+
+  let running=false,last=null;
+
+  function state(){
+    const total=+T.value;
+    const t=(+timeSlider.value/1000)*total;
+    const ui=+u.value, ai=+a.value;
+    return {total,t,ui,ai,v:ui+ai*t};
+  }
+
+  function arrow(x,y,len,color,label){
+    if(Math.abs(len)<2)return;
+    const sign=Math.sign(len),L=Math.min(155,Math.abs(len)),x2=x+sign*L;
+    ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=4;
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x2,y);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x2,y);
+    ctx.lineTo(x2-sign*12,y-6);ctx.lineTo(x2-sign*12,y+6);
+    ctx.closePath();ctx.fill();
+    ctx.font='bold 14px Arial';
+    ctx.fillText(label,sign>0?x+7:x2+7,y-10);
+  }
+
+  function draw(){
+    const q=state();
+    uRead.textContent=q.ui.toFixed(0)+' m/s';
+    aRead.textContent=q.ai.toFixed(1)+' m/s²';
+    TRead.textContent=q.total.toFixed(0)+' s';
+
+    uVal.textContent=q.ui.toFixed(1)+' m/s';
+    aVal.textContent=q.ai.toFixed(1)+' m/s²';
+    timeVal.textContent=q.t.toFixed(1)+' s';
+    vVal.textContent=q.v.toFixed(1)+' m/s';
+
+    const change=q.ai*q.t;
+    working.innerHTML=
+      '<b>Live calculation:</b><br>'+
+      'v = u + at<br>'+
+      'v = '+q.ui.toFixed(1)+' + ('+q.ai.toFixed(1)+' × '+q.t.toFixed(1)+')<br>'+
+      'v = '+q.ui.toFixed(1)+' + '+change.toFixed(1)+'<br>'+
+      '<b>v = '+q.v.toFixed(1)+' m/s</b>';
+
+    ctx.clearRect(0,0,c.width,c.height);
+
+    ctx.strokeStyle='#203653';ctx.lineWidth=1;
+    for(let x=0;x<c.width;x+=40){
+      ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke();
+    }
+    for(let y=0;y<c.height;y+=40){
+      ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();
+    }
+
+    const roadY=255;
+    ctx.strokeStyle='#9bacc0';ctx.lineWidth=4;
+    ctx.beginPath();ctx.moveTo(60,roadY);ctx.lineTo(800,roadY);ctx.stroke();
+
+    const displacement=q.ui*q.t+0.5*q.ai*q.t*q.t;
+    const px=430+Math.max(-60,Math.min(60,displacement))*5.5;
+
+    ctx.fillStyle='#5bd4ff';ctx.fillRect(px-29,roadY-50,58,36);
+    ctx.fillStyle='#07111f';
+    ctx.beginPath();ctx.arc(px-18,roadY-9,8,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(px+18,roadY-9,8,0,Math.PI*2);ctx.fill();
+
+    ctx.fillStyle='#fff';ctx.font='bold 15px Arial';
+    ctx.fillText('Object',px-24,roadY-60);
+
+    arrow(px,roadY-95,q.v*7,'#ffd166','velocity');
+    arrow(px,roadY-140,q.ai*28,'#7ee2a8','acceleration');
+
+    ctx.fillStyle='#ffd166';ctx.font='bold 20px Arial';
+    ctx.fillText('v = u + at',365,52);
+
+    ctx.fillStyle='#b8c7d9';ctx.font='14px Arial';
+    ctx.fillText('Initial velocity = '+q.ui.toFixed(1)+' m/s',60,330);
+    ctx.fillText('Current velocity = '+q.v.toFixed(1)+' m/s',595,330);
+  }
+
+  function animate(ts){
+    if(!running)return;
+    if(last===null)last=ts;
+    const dt=ts-last;last=ts;
+    let val=+timeSlider.value+dt*0.08;
+    if(val>=1000){val=1000;running=false}
+    timeSlider.value=val;
+    draw();
+    if(running)requestAnimationFrame(animate);
+  }
+
+  document.getElementById('play').addEventListener('click',()=>{
+    if(+timeSlider.value>=1000)timeSlider.value=0;
+    running=true;last=null;requestAnimationFrame(animate);
+  });
+  document.getElementById('pause').addEventListener('click',()=>{
+    running=false;last=null;
+  });
+  document.getElementById('reset').addEventListener('click',()=>{
+    running=false;last=null;timeSlider.value=0;draw();
+  });
+
+  [u,a,T,timeSlider].forEach(el=>el.addEventListener('input',()=>{
+    if(el!==timeSlider){running=false;last=null}
+    draw();
+  }));
+
+  // Basic copy/source-view deterrents.
+  document.addEventListener('copy',e=>e.preventDefault());
+  document.addEventListener('cut',e=>e.preventDefault());
+  document.addEventListener('dragstart',e=>e.preventDefault());
+  document.addEventListener('keydown',e=>{
+    const k=e.key.toLowerCase();
+    if(
+      (e.ctrlKey && ['c','u','s','a','p'].includes(k)) ||
+      (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)) ||
+      e.key==='F12'
+    ){
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  });
+
+  draw();
+})();
+</script>
+</body>
+</html>
