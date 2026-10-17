@@ -1,0 +1,133 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#081526"><meta name="description" content="Explore force as a vector, its direction, components, and newton (N)."><title>Chapter 6 Lab 1: Force: Magnitude, Direction and SI Unit | Prayatnam Academy</title><style>*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top left,#1a3855,#071421 65%);color:#f0f8ff;font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:1220px;margin:auto;padding:16px}header,.panel,footer{background:#10243bed;border:1px solid #2d4962;border-radius:18px;padding:20px}header{display:flex;justify-content:space-between;align-items:center;gap:15px}.brand{font-size:20px;color:#ffd477;font-weight:850}h1{font-size:clamp(25px,4vw,37px);line-height:1.18;margin:7px 0}h2{font-size:20px;margin:0 0 12px}p{color:#b5c9d9;margin:6px 0}.muted{font-size:13px;color:#a8bfd0}a{color:#5dd5ff}.grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:16px;margin-top:16px}.panel{min-width:0}canvas{display:block;width:100%;height:auto;aspect-ratio:900/460;border:1px solid #36546f;border-radius:13px;background:#081b2e}.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.control{background:#091c30;border:1px solid #2a4761;border-radius:12px;padding:12px}label{display:flex;justify-content:space-between;gap:7px;font-size:13px;font-weight:700}output{color:#ffd477;font-variant-numeric:tabular-nums}input[type=range]{width:100%;margin-top:15px;accent-color:#5dd5ff;touch-action:pan-y}select{width:100%;background:#294560;border:1px solid #4b6a83;border-radius:10px;padding:10px;color:#fff;font:inherit}button{border:0;border-radius:10px;background:#5dd5ff;color:#071521;font:inherit;font-weight:800;cursor:pointer;padding:10px 15px;min-height:43px}.secondary{background:#294560;color:white}.buttons{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ffd477;outline-offset:2px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#091c30;border:1px solid #2a4761;border-radius:12px;padding:12px}.metric small{display:block;color:#b0c5d5}.metric strong{display:block;font-size:clamp(18px,2.5vw,27px);font-variant-numeric:tabular-nums}.formula,.note{background:#091c30;border:1px solid #2a4761;border-radius:12px;padding:14px;margin-top:13px}.formula b{color:#ffd477;font-size:20px}.note{border-left:4px solid #70e6b4}#steps{line-height:1.85;overflow-wrap:anywhere}progress{width:100%;accent-color:#70e6b4;margin-top:10px}footer{text-align:center;margin-top:16px;color:#a8bfd0}.bottom{margin-top:16px}@media(max-width:850px){.grid{grid-template-columns:1fr}header{flex-direction:column;align-items:flex-start}}@media(max-width:490px){main{padding:9px}header,.panel,footer{padding:13px}.controls{grid-template-columns:1fr}.metric{padding:10px}}</style></head><body><main>
+<header><div><div class="brand">✦ Prayatnam Academy</div><div class="muted">Class 9 Science Virtual Labs · Chapter 6: How Forces Affect Motion</div><h1>Lab 1: Force: Magnitude, Direction and SI Unit</h1><p>Explore force as a vector, its direction, components, and newton (N).</p></div><div class="muted"><a href="https://www.prayatnam247.com" target="_blank" rel="noopener">www.prayatnam247.com</a><br>Contact: <a href="tel:8115749450">8115749450</a></div></header>
+<div class="grid"><section class="panel"><h2>Interactive Simulator</h2><canvas id="scene" width="900" height="460" role="img" aria-label="Interactive force and motion diagram"></canvas><progress id="progress" max="100" value="0" aria-label="Experiment progress"></progress><div class="controls"><div class="control"><label for="in_magnitude">Force magnitude <output id="out_magnitude"></output></label><input id="in_magnitude" type="range" min="0" max="100" step="5" value="40"></div><div class="control"><label for="in_angle">Direction <output id="out_angle"></output></label><input id="in_angle" type="range" min="0" max="360" step="15" value="30"></div></div><div class="buttons"><button id="start">▶ Start</button><button id="pause" class="secondary">⏸ Pause</button><button id="reset" class="secondary">↺ Reset</button></div><p class="muted">Adjust sliders and compare predictions with live results. The diagrams are conceptual, not to scale.</p></section><aside class="panel"><h2>Live Results</h2><div class="metrics"><div class="metric"><small id="label0">Measurement</small><strong id="value0">—</strong></div><div class="metric"><small id="label1">Measurement</small><strong id="value1">—</strong></div><div class="metric"><small id="label2">Measurement</small><strong id="value2">—</strong></div><div class="metric"><small id="label3">Measurement</small><strong id="value3">—</strong></div></div><div class="formula"><div class="muted">Key physics relation</div><b>Fx = F cos θ; Fy = F sin θ</b><div id="steps" aria-live="polite"></div></div><div class="note" id="concept" aria-live="polite"></div></aside></div>
+<section class="panel bottom"><h2>What to Learn</h2><p>Force is a vector: it has magnitude and direction. Its SI unit is the newton (N). 1 N = 1 kg·m/s².</p><p><b>Student activity:</b> Change one variable, record the results and explain the effect using the formula. Compare a zero-force case with a nonzero-force case.</p></section>
+<footer>Prayatnam Academy · <a href="https://www.prayatnam247.com">www.prayatnam247.com</a> · 8115749450<br><span class="muted">Chapter 6: How Forces Affect Motion · Lab 1</span></footer></main><script id="cfg" type="application/json">{"controls": [["magnitude", "Force magnitude", "N", 0, 100, 5, 40], ["angle", "Direction", "\u00b0", 0, 360, 15, 30]], "formula": "Fx = F cos \u03b8; Fy = F sin \u03b8", "note": "Force is a vector: it has magnitude and direction. Its SI unit is the newton (N). 1 N = 1 kg\u00b7m/s\u00b2.", "kind": "force"}</script><script>
+(()=>{
+'use strict';
+const cfg=JSON.parse(document.getElementById('cfg').textContent);
+const $=id=>document.getElementById(id),cv=$('scene'),g=cv.getContext('2d');
+let t=0,playing=false,previous=null,raf=0;
+const n=v=>Math.abs(v)<.005?'0':Number(v.toFixed(2)).toLocaleString('en-IN',{maximumFractionDigits:2});
+const values=()=>Object.fromEntries(cfg.controls.map(a=>[a[0],+$('in_'+a[0]).value]));
+function stroke(x,y,X,Y,color='#8eb4c9',w=3){g.beginPath();g.strokeStyle=color;g.lineWidth=w;g.moveTo(x,y);g.lineTo(X,Y);g.stroke()}
+function arrow(x,y,X,Y,color='#5dd5ff',w=5){stroke(x,y,X,Y,color,w);let a=Math.atan2(Y-y,X-x);stroke(X,Y,X-14*Math.cos(a-.48),Y-14*Math.sin(a-.48),color,w);stroke(X,Y,X-14*Math.cos(a+.48),Y-14*Math.sin(a+.48),color,w)}
+function box(x,y,w,h,color='#5dd5ff'){g.fillStyle=color;g.fillRect(x,y,w,h)}
+function circle(x,y,r,color){g.beginPath();g.arc(x,y,r,0,Math.PI*2);g.fillStyle=color;g.fill()}
+function text(s,x,y,color='#eaf6ff',size=18){g.fillStyle=color;g.font='bold '+size+'px system-ui';g.fillText(s,x,y)}
+function model(v){
+ let data=[],steps='',message='',pos=0,vel=0,acc=0;
+ const k=cfg.kind;
+ if(k==='force'){
+ const rad=v.angle*Math.PI/180,fx=v.magnitude*Math.cos(rad),fy=v.magnitude*Math.sin(rad);
+ data=[['Magnitude',n(v.magnitude)+' N'],['Direction',n(v.angle)+'°'],['Horizontal component',n(fx)+' N'],['Vertical component',n(fy)+' N']];
+ steps=`Fx = ${n(v.magnitude)} cos ${v.angle}° = ${n(fx)} N<br>Fy = ${n(v.magnitude)} sin ${v.angle}° = ${n(fy)} N`;
+ message='Direction is measured counterclockwise from the positive horizontal axis. The force is a vector.';
+ }else if(k==='balance'){
+ const net=v.right-v.left;acc=net/v.mass;vel=acc*t;pos=.5*acc*t*t;
+ data=[['Net force',n(net)+' N'],['Acceleration',n(acc)+' m/s²'],['Velocity after '+n(t)+' s',n(vel)+' m/s'],['State',net===0?'Balanced':'Unbalanced']];
+ steps=`Fnet = ${v.right} − ${v.left} = ${n(net)} N<br>a = ${n(net)} / ${v.mass} = ${n(acc)} m/s²`;
+ message=net===0?'The opposing forces cancel; a body initially at rest stays at rest.':'The forces do not cancel. The body accelerates toward the larger force.';
+ }else if(k==='friction'){
+ const N=v.mass*9.8,maxS=v.muS*N,kf=v.muK*N;
+ const sliding=v.push>maxS,fric=sliding?kf:v.push,net=v.push-fric;
+ acc=net/v.mass;vel=acc*t;pos=.5*acc*t*t;
+ data=[['Normal force',n(N)+' N'],['Maximum static friction',n(maxS)+' N'],['Actual friction',n(fric)+' N'],['Net force',n(net)+' N']];
+ steps=`N = ${v.mass} × 9.8 = ${n(N)} N<br>Max static friction = ${n(v.muS)} × ${n(N)} = ${n(maxS)} N<br>${sliding?'Sliding: fk = μkN = '+n(kf)+' N':'Not sliding: fs = applied force = '+n(fric)+' N'}`;
+ message=sliding?'Push exceeds maximum static friction: the block slides. Kinetic friction opposes motion.':'Static friction balances the push: the block remains at rest.';
+ }else if(k==='first'||k==='second'||k==='zero'){
+ const mass=v.mass,F=k==='zero'?0:v.force,u=k==='zero'?v.velocity:v.speed;
+ acc=F/mass;vel=u+acc*t;pos=u*t+.5*acc*t*t;
+ data=[['Net force',n(F)+' N'],['Acceleration',n(acc)+' m/s²'],['Velocity',n(vel)+' m/s'],['Displacement',n(pos)+' m']];
+ steps=`a = ${n(F)} / ${mass} = ${n(acc)} m/s²<br>v = ${n(u)} + (${n(acc)} × ${n(t)}) = ${n(vel)} m/s`;
+ message=F===0?'With zero net force, acceleration is zero. The initial velocity is unchanged.':'A nonzero net force changes velocity. The acceleration has the same sign as the net force.';
+ }else if(k==='momentum'){
+ const p0=v.mass*v.initial,p1=v.mass*v.final,delta=p1-p0,avg=delta/v.duration;
+ const phase=Math.min(1,t/v.duration),cur=v.initial+(v.final-v.initial)*phase;
+ vel=cur;pos=t<=v.duration?v.initial*t+.5*(v.final-v.initial)/v.duration*t*t:
+ (v.initial+v.final)*v.duration/2+v.final*(t-v.duration);
+ data=[['Initial momentum',n(p0)+' kg·m/s'],['Final momentum',n(p1)+' kg·m/s'],['Change in momentum',n(delta)+' kg·m/s'],['Average net force',n(avg)+' N']];
+ steps=`Δp = ${v.mass} × (${v.final} − ${v.initial}) = ${n(delta)} kg·m/s<br>Favg = ${n(delta)} / ${n(v.duration)} = ${n(avg)} N`;
+ message='The velocity changes linearly over the chosen time interval, representing constant average net force.';
+ }else if(k==='third'){
+ const a=v.interaction/v.mass,b=-v.interaction/v.massB;
+ data=[['Force on A',n(v.interaction)+' N'],['Force on B',n(-v.interaction)+' N'],['Acceleration of A',n(a)+' m/s²'],['Acceleration of B',n(b)+' m/s²']];
+ steps=`FAB = +${v.interaction} N; FBA = −${v.interaction} N<br>aA = ${n(v.interaction)} / ${v.massA} = ${n(a)} m/s²<br>aB = −${n(v.interaction)} / ${v.massB} = ${n(b)} m/s²`;
+ message='The interaction forces are equal and opposite. Different masses can have different acceleration magnitudes.';
+ }
+ return {data,steps,message,pos,vel,acc};
+}
+function draw(v,r){
+ g.clearRect(0,0,900,460);box(0,0,900,460,'#081b2e');
+ g.strokeStyle='#19364d';g.lineWidth=1;
+ for(let x=0;x<900;x+=45){g.beginPath();g.moveTo(x,0);g.lineTo(x,460);g.stroke()}
+ for(let y=0;y<460;y+=45){g.beginPath();g.moveTo(0,y);g.lineTo(900,y);g.stroke()}
+ const k=cfg.kind; text('Time: '+n(t)+' s',720,42,'#ffd477',19);
+ if(k==='force'){
+ const x=450,y=255,radians=v.angle*Math.PI/180;
+ stroke(100,y,800,y,'#7b9ab2',3);stroke(x,60,x,420,'#7b9ab2',3);
+ circle(x,y,10,'#ffd477');
+ const endX=x+175*Math.cos(radians),endY=y-175*Math.sin(radians);
+ arrow(x,y,endX,endY,'#5dd5ff',7);
+ arrow(x,y,endX,y,'#70e6b4',3);arrow(endX,y,endX,endY,'#ff9caf',3);
+ text('F = '+v.magnitude+' N',x+20,65,'#5dd5ff',22);
+ text('θ = '+v.angle+'°',x+20,93,'#ffd477',18);
+ text('+x',805,y+6,'#eaf6ff',16);text('+y',x+10,55,'#eaf6ff',16);
+ }else if(k==='third'){
+ const a=v.interaction/v.massA,b=v.interaction/v.massB;
+ const xA=350+Math.min(180,.5*a*t*t*9),xB=550-Math.min(180,.5*b*t*t*9);
+ box(70,350,760,12,'#657f94');
+ box(xA-50,255,100,95,'#5dd5ff');box(xB-50,255,100,95,'#ffd477');
+ text('A',xA-8,315,'#081b2e',24);text('B',xB-8,315,'#081b2e',24);
+ arrow(xA,225,xA+Math.min(140,v.interaction*2),225,'#70e6b4');
+ arrow(xB,185,xB-Math.min(140,v.interaction*2),185,'#ff9caf');
+ text('Force on A →',125,105,'#70e6b4');text('← Force on B',550,105,'#ff9caf');
+ text('Forces act on DIFFERENT bodies',230,415,'#ffd477',19);
+ }else{
+ box(70,350,760,12,'#657f94');
+ const x=450+Math.max(-285,Math.min(285,r.pos*10));
+ box(x-60,260,120,90,'#5dd5ff');text('OBJECT',x-46,314,'#081b2e',18);
+ if(k==='balance'){
+ arrow(x,238,x+v.right*2,238,'#70e6b4');
+ arrow(x,203,x-v.left*2,203,'#ff9caf');
+ text('Right: '+v.right+' N',90,95,'#70e6b4');text('Left: '+v.left+' N',560,95,'#ff9caf');
+ }else if(k==='friction'){
+ arrow(x,238,x+v.push*1.8,238,'#70e6b4');
+ arrow(x,207,x-Math.min(220,Math.abs(v.push-parseFloat(r.data[3][1].replaceAll(',','')))*1.8),207,'#ff9caf');
+ arrow(x-85,350,x-85,270,'#ffd477');
+ arrow(x+85,260,x+85,340,'#ff9caf');
+ text('Normal ↑',105,105,'#ffd477');text('Weight ↓',620,105,'#ff9caf');
+ }else if(k==='momentum'){
+ arrow(x,220,x+Math.max(-170,Math.min(170,r.vel*13)),220,'#70e6b4');
+ text('Velocity = '+n(r.vel)+' m/s',85,105,'#70e6b4');
+ }else if(k==='first'||k==='second'||k==='zero'){
+ const f=k==='zero'?0:v.force;
+ if(f!==0)arrow(x,230,x+f*4,230,'#70e6b4');
+ arrow(x,190,x+Math.max(-180,Math.min(180,r.vel*14)),190,'#ffd477');
+ text('Velocity = '+n(r.vel)+' m/s',95,105,'#ffd477');
+ text('Net force = '+n(f)+' N',575,105,'#70e6b4');
+ }else if(k==='friction'){}
+ text('Displacement: '+n(r.pos)+' m',95,416,'#ffd477',19);
+ }
+}
+function refresh(){
+ const v=values(),r=model(v);
+ cfg.controls.forEach(a=>$('out_'+a[0]).textContent=n(v[a[0]])+(a[2]?' '+a[2]:''));
+ r.data.forEach((a,i)=>{$('label'+i).textContent=a[0];$('value'+i).textContent=a[1]});
+ $('steps').innerHTML=r.steps;$('concept').textContent=r.message;
+ $('progress').value=t/6*100;draw(v,r);
+}
+function stop(){playing=false;previous=null;cancelAnimationFrame(raf)}
+function tick(now){
+ if(!playing)return;if(previous===null)previous=now;
+ t=Math.min(6,t+Math.min(.05,(now-previous)/1000));previous=now;refresh();
+ if(t>=6){stop();$('start').textContent='↻ Replay';return}
+ raf=requestAnimationFrame(tick);
+}
+$('start').addEventListener('click',()=>{if(playing)return;if(t>=6)t=0;playing=true;previous=null;$('start').textContent='▶ Running';raf=requestAnimationFrame(tick)});
+$('pause').addEventListener('click',()=>{stop();$('start').textContent='▶ Resume'});
+$('reset').addEventListener('click',()=>{stop();t=0;$('start').textContent='▶ Start';refresh()});
+cfg.controls.forEach(a=>$('in_'+a[0]).addEventListener('input',()=>{stop();t=0;$('start').textContent='▶ Start';refresh()}));
+refresh();
+})();
+</script></body></html>
