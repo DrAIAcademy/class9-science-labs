@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#081526">
+<meta name="description" content="Class 9 Chapter 7 Force Displacement Graph Virtual Lab by Prayatnam Academy">
+<title>Lab 2: Force–Displacement Graph | Prayatnam Academy</title>
+<style>
+:root{color-scheme:dark;--bg:#071321;--panel:#10243b;--inner:#091b2d;--border:#29435e;--text:#eff7ff;--muted:#a8bfd3;--cyan:#5bd6ff;--yellow:#ffd36f;--green:#72e4b4;--pink:#ff8da1}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 18% 0,#173654,#071321 65%);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:1220px;margin:auto;padding:16px}
+header,.card,footer{border:1px solid var(--border);background:#10243bea;border-radius:20px;padding:20px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{font-size:20px;font-weight:850;color:var(--yellow)}
+h1{font-size:clamp(25px,4vw,39px);line-height:1.15;margin:7px 0}
+h2{font-size:20px;margin:0 0 12px}h3{font-size:16px;margin:0 0 8px}
+p{color:var(--muted);margin:6px 0}a{color:var(--cyan)}
+.meta{font-size:13px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(300px,1fr);gap:16px;margin-top:16px}
+.card{min-width:0}
+canvas{display:block;width:100%;height:auto;aspect-ratio:900/530;border-radius:14px;border:1px solid #34536f;background:var(--inner)}
+.legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:10px 0}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.control{background:var(--inner);border:1px solid var(--border);border-radius:13px;padding:13px}
+label{font-size:13px;font-weight:700;display:flex;justify-content:space-between;gap:8px}
+output{color:var(--yellow);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;margin-top:14px;accent-color:var(--cyan);touch-action:pan-y}
+select{width:100%;background:#203b55;color:white;border:1px solid #48627d;border-radius:9px;padding:11px;font:inherit}
+button{background:var(--cyan);color:#071321;border:0;border-radius:11px;padding:10px 15px;min-height:43px;font:inherit;font-weight:800;cursor:pointer}
+button.secondary{background:#294660;color:white}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.metric{background:var(--inner);border:1px solid var(--border);border-radius:13px;padding:12px}
+.metric small{display:block;color:var(--muted)}.metric strong{display:block;font-size:clamp(19px,2.8vw,27px);font-variant-numeric:tabular-nums}
+.formula,.explain{background:var(--inner);border:1px solid var(--border);padding:15px;border-radius:13px;margin-top:13px}
+.formula b{font-size:22px;color:var(--yellow)}
+#calculation{line-height:1.95;overflow-wrap:anywhere}
+.explain{border-left:4px solid var(--green)}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+footer{text-align:center;margin-top:16px;color:var(--muted)}
+.preset{background:#27445f;color:white;font-size:13px}.preset.active{background:var(--yellow);color:#071321}
+.note{font-size:12px;color:var(--muted);margin-top:12px}
+@media(max-width:850px){.grid,.bottom{grid-template-columns:1fr}header{flex-direction:column;align-items:flex-start}}
+@media(max-width:480px){main{padding:9px}header,.card,footer{padding:13px}.controls{grid-template-columns:1fr}.metric{padding:10px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <div>
+  <div class="brand">✦ Prayatnam Academy</div>
+  <div class="meta">Class 9 Science Virtual Lab · Chapter 7: Work, Energy and Simple Machines</div>
+  <h1>Lab 2: Force–Displacement Graph</h1>
+  <p>Discover why the area under a force–displacement graph represents work done.</p>
+ </div>
+ <div class="meta"><a href="https://www.prayatnam247.com" target="_blank" rel="noopener">www.prayatnam247.com</a><br>Contact: <a href="tel:8115749450">8115749450</a></div>
+</header>
+<div class="grid">
+<section class="card">
+<h2>Interactive Graph Experiment</h2>
+<canvas id="graph" width="900" height="530" role="img" aria-label="Force versus displacement graph with shaded signed area representing work done"></canvas>
+<div class="legend">
+ <span><i class="dot" style="background:var(--cyan)"></i>Force curve</span>
+ <span><i class="dot" style="background:var(--green)"></i>Positive work area</span>
+ <span><i class="dot" style="background:var(--pink)"></i>Negative work area</span>
+ <span><i class="dot" style="background:var(--yellow)"></i>Current displacement</span>
+</div>
+<div class="controls">
+ <div class="control">
+  <label for="mode">Force pattern</label>
+  <select id="mode">
+   <option value="constant">Constant force</option>
+   <option value="increasing">Uniformly increasing force</option>
+   <option value="decreasing">Uniformly decreasing force</option>
+   <option value="opposing">Constant opposing force</option>
+  </select>
+ </div>
+ <div class="control">
+  <label for="force">Force magnitude <output id="forceOut">20 N</output></label>
+  <input id="force" type="range" min="0" max="50" step="1" value="20">
+ </div>
+ <div class="control">
+  <label for="distance">Total displacement <output id="distanceOut">8 m</output></label>
+  <input id="distance" type="range" min="1" max="10" step="0.5" value="8">
+ </div>
+ <div class="control">
+  <label for="speed">Animation speed <output id="speedOut">1×</output></label>
+  <input id="speed" type="range" min="0.5" max="3" step="0.5" value="1">
+ </div>
+</div>
+<div class="buttons">
+ <button id="start">▶ Start Experiment</button>
+ <button id="pause" class="secondary">⏸ Pause</button>
+ <button id="reset" class="secondary">↺ Reset</button>
+</div>
+<p class="note">This graph represents the component of force along the direction of displacement. In variable-force modes, the graph shows a simple idealised linear force model.</p>
+</section>
+<aside class="card">
+<h2>Live Results</h2>
+<div class="metrics">
+ <div class="metric"><small>Work done so far</small><strong id="work">0 J</strong></div>
+ <div class="metric"><small>Total work</small><strong id="total">160 J</strong></div>
+ <div class="metric"><small>Current displacement</small><strong id="position">0 m</strong></div>
+ <div class="metric"><small>Current force</small><strong id="currentForce">20 N</strong></div>
+</div>
+<div class="formula">
+ <div class="meta">Area under the force–displacement graph</div>
+ <b id="formula">W = F × s</b>
+ <div id="calculation" aria-live="polite"></div>
+</div>
+<div class="explain" id="concept">For a constant force, work done equals the rectangular area under the graph.</div>
+</aside>
+</div>
+<div class="bottom">
+<section class="card">
+<h2>Quick Experiments</h2>
+<p>Choose a scenario, then start the experiment.</p>
+<div class="buttons">
+ <button class="preset" data-mode="constant">Rectangle: constant force</button>
+ <button class="preset" data-mode="increasing">Triangle: increasing force</button>
+ <button class="preset" data-mode="decreasing">Triangle: decreasing force</button>
+ <button class="preset" data-mode="opposing">Negative work</button>
+</div>
+</section>
+<section class="card">
+<h2>Observation & Learning</h2>
+<p><b>Constant force:</b> Work = area of rectangle = F × s.</p>
+<p><b>Increasing force:</b> Work = area of triangle = ½ × F<sub>max</sub> × s.</p>
+<p><b>Decreasing force:</b> Work = area of triangle = ½ × F<sub>max</sub> × s.</p>
+<p><b>Opposing force:</b> Area below the axis gives negative work.</p>
+<p><b>SI unit:</b> joule (J) = newton metre (N·m).</p>
+</section>
+</div>
+<footer>Prayatnam Academy · <a href="https://www.prayatnam247.com">www.prayatnam247.com</a> · 8115749450<br><span class="meta">Chapter 7 · Lab 2 · Force–Displacement Graph</span></footer>
+</main>
+<script>
+(()=>{
+'use strict';
+const el=id=>document.getElementById(id),ctx=el('graph').getContext('2d');
+const mode=el('mode'),force=el('force'),distance=el('distance'),speed=el('speed');
+let fraction=0,running=false,prev=null,frameId=0;
+const num=n=>Math.abs(n)<0.005?'0':Number(n.toFixed(2)).toLocaleString('en-IN',{maximumFractionDigits:2});
+function parameters(){return {m:mode.value,F:+force.value,S:+distance.value,rate:+speed.value};}
+function at(x,p){
+ if(p.m==='increasing')return p.F*x/p.S;
+ if(p.m==='decreasing')return p.F*(1-x/p.S);
+ if(p.m==='opposing')return -p.F;
+ return p.F;
+}
+function workAt(x,p){
+ if(p.m==='increasing')return p.F*x*x/(2*p.S);
+ if(p.m==='decreasing')return p.F*(x-x*x/(2*p.S));
+ if(p.m==='opposing')return -p.F*x;
+ return p.F*x;
+}
+function draw(){
+ const p=parameters(),c=ctx.canvas,W=c.width,H=c.height;
+ const L=100,R=845,T=55,B=455,plotW=R-L;
+ const xNow=p.S*fraction, y0=p.m==='opposing'?155:415;
+ const yScale=p.m==='opposing'?235/50:290/50;
+ const X=x=>L+x/p.S*plotW;
+ const Y=f=>y0-f*yScale;
+ ctx.clearRect(0,0,W,H);
+ ctx.fillStyle='#091b2d';ctx.fillRect(0,0,W,H);
+ ctx.font='15px system-ui';ctx.lineWidth=1;
+ // Horizontal grid and signed force labels
+ const marks=p.m==='opposing'?[-50,-40,-30,-20,-10,0]:[0,10,20,30,40,50];
+ for(const f of marks){
+  const yy=Y(f);
+  ctx.strokeStyle=f===0?'#d6e7f4':'#29425b';
+  ctx.lineWidth=f===0?2:1;
+  ctx.beginPath();ctx.moveTo(L,yy);ctx.lineTo(R,yy);ctx.stroke();
+  ctx.fillStyle='#a8bfd3';ctx.textAlign='right';ctx.fillText(String(f),L-12,yy+5);
+ }
+ for(let i=0;i<=10;i++){
+  const xx=L+plotW*i/10;
+  ctx.strokeStyle='#253e56';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(xx,T);ctx.lineTo(xx,B);ctx.stroke();
+  ctx.fillStyle='#a8bfd3';ctx.textAlign='center';ctx.fillText(num(p.S*i/10),xx,B+23);
+ }
+ ctx.textAlign='left';ctx.fillStyle='#e6f4ff';ctx.font='bold 18px system-ui';
+ ctx.fillText('Force (N)',L-42,30);
+ ctx.textAlign='right';ctx.fillText('Displacement (m)',R,B+57);
+ // Shade only the work completed so far
+ const segments=Math.max(2,Math.ceil(160*fraction));
+ ctx.beginPath();ctx.moveTo(X(0),y0);
+ for(let i=0;i<=segments;i++){
+  const xx=xNow*i/segments;
+  ctx.lineTo(X(xx),Y(at(xx,p)));
+ }
+ ctx.lineTo(X(xNow),y0);ctx.closePath();
+ ctx.fillStyle=p.m==='opposing'?'rgba(255,141,161,.28)':'rgba(114,228,180,.28)';
+ ctx.fill();
+ // Draw full force curve
+ ctx.beginPath();
+ for(let i=0;i<=200;i++){
+  const x=p.S*i/200;
+  if(i===0)ctx.moveTo(X(x),Y(at(x,p)));else ctx.lineTo(X(x),Y(at(x,p)));
+ }
+ ctx.strokeStyle='#5bd6ff';ctx.lineWidth=5;ctx.stroke();
+ // Current position cursor
+ ctx.strokeStyle='#ffd36f';ctx.lineWidth=3;ctx.setLineDash([8,7]);
+ ctx.beginPath();ctx.moveTo(X(xNow),T);ctx.lineTo(X(xNow),B);ctx.stroke();ctx.setLineDash([]);
+ ctx.beginPath();ctx.arc(X(xNow),Y(at(xNow,p)),9,0,Math.PI*2);
+ ctx.fillStyle='#ffd36f';ctx.fill();
+ ctx.textAlign='left';ctx.fillStyle='#ffd36f';ctx.font='bold 17px system-ui';
+ ctx.fillText('Shaded area = '+num(workAt(xNow,p))+' J',L+12,T+25);
+}
+function update(){
+ const p=parameters(),x=p.S*fraction,actual=at(x,p),total=workAt(p.S,p);
+ el('forceOut').textContent=p.F+' N';el('distanceOut').textContent=num(p.S)+' m';
+ el('speedOut').textContent=num(p.rate)+'×';
+ el('work').textContent=num(workAt(x,p))+' J';
+ el('total').textContent=num(total)+' J';
+ el('position').textContent=num(x)+' m';
+ el('currentForce').textContent=num(actual)+' N';
+ const triangle=p.m==='increasing'||p.m==='decreasing';
+ el('formula').textContent=triangle?'W = ½ × Fmax × s':'W = F × s';
+ el('calculation').textContent=triangle?
+  'Total W = ½ × '+p.F+' × '+num(p.S)+' = '+num(total)+' J':
+  'Total W = '+num(p.m==='opposing'?-p.F:p.F)+' × '+num(p.S)+' = '+num(total)+' J';
+ el('concept').textContent=p.m==='constant'?'A constant force creates a rectangle. Work equals the area of that rectangle.':
+ p.m==='increasing'?'Force rises linearly from zero. The triangular area gives the total work.':
+ p.m==='decreasing'?'Force falls linearly to zero. The triangular area gives the total work.':
+ 'The force points opposite to displacement, so the signed area and work are negative.';
+ draw();
+}
+function stop(){running=false;prev=null;cancelAnimationFrame(frameId)}
+function tick(now){
+ if(!running)return;
+ if(prev===null)prev=now;
+ const dt=Math.min((now-prev)/1000,.05);prev=now;
+ fraction=Math.min(1,fraction+dt*parameters().rate/5);
+ update();
+ if(fraction>=1){stop();el('start').textContent='↻ Replay';return;}
+ frameId=requestAnimationFrame(tick);
+}
+el('start').addEventListener('click',()=>{
+ if(running)return;
+ if(fraction>=1)fraction=0;
+ running=true;prev=null;el('start').textContent='▶ Running';
+ frameId=requestAnimationFrame(tick);
+});
+el('pause').addEventListener('click',()=>{stop();el('start').textContent='▶ Resume'});
+el('reset').addEventListener('click',()=>{stop();fraction=0;el('start').textContent='▶ Start Experiment';update()});
+[mode,force,distance,speed].forEach(input=>input.addEventListener('input',()=>{
+ stop();fraction=0;el('start').textContent='▶ Start Experiment';
+ document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode.value));
+ update();
+}));
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{
+ mode.value=b.dataset.mode;stop();fraction=0;el('start').textContent='▶ Start Experiment';
+ document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));
+ update();
+}));
+update();
+})();
+</script>
+</body>
+</html>
