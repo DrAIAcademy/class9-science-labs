@@ -1,0 +1,167 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#081526"><title>Lab 8: Three Classes of Levers | Prayatnam Academy</title><style>*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top left,#173754,#071421 70%);color:#eff8ff;font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:1160px;margin:auto;padding:16px}header,.panel,footer{background:#10243ce8;border:1px solid #2b4761;border-radius:19px;padding:20px}header{display:flex;justify-content:space-between;gap:14px;align-items:center}.brand{color:#ffd36f;font-weight:850;font-size:20px}h1{font-size:clamp(25px,4vw,38px);line-height:1.2;margin:8px 0}h2{font-size:20px;margin:0 0 12px}p{color:#b5c8d8;margin:6px 0}.muted{color:#a9bed0;font-size:13px}a{color:#5bd6ff}.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:16px;margin-top:16px}.panel{min-width:0}canvas{display:block;width:100%;height:auto;aspect-ratio:900/460;background:#081c2e;border:1px solid #375773;border-radius:14px}.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:15px 0}.control{background:#091c30;border:1px solid #2a455f;padding:12px;border-radius:12px}label{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}output{color:#ffd36f}input[type=range]{width:100%;margin-top:14px;accent-color:#5bd6ff;touch-action:pan-y}.buttons{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}button,select{border:0;border-radius:10px;padding:10px 14px;font:inherit;min-height:43px}button{background:#5bd6ff;color:#061725;font-weight:800;cursor:pointer}button.secondary{background:#294763;color:white}select{background:#294763;color:white;width:100%;border:1px solid #4b6a83}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ffd36f;outline-offset:2px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#091c30;border:1px solid #2a455f;padding:12px;border-radius:12px}.metric small{color:#a9bed0;display:block}.metric strong{font-size:clamp(19px,2.7vw,27px);font-variant-numeric:tabular-nums}.formula,.note{background:#091c30;border:1px solid #2a455f;border-radius:12px;padding:14px;margin-top:13px}.formula b{color:#ffd36f;font-size:19px}.note{border-left:4px solid #72e4b4}#steps{line-height:1.85;overflow-wrap:anywhere}footer{text-align:center;margin-top:16px;color:#a9bed0}progress{width:100%;accent-color:#72e4b4} @media(max-width:850px){.layout{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}}@media(max-width:480px){main{padding:9px}header,.panel,footer{padding:13px}.controls{grid-template-columns:1fr}.metric{padding:10px}}</style></head>
+<body><main><header><div><div class="brand">✦ Prayatnam Academy</div><div class="muted">Class 9 Science · Chapter 7: Work, Energy and Simple Machines</div><h1>Lab 8: Three Classes of Levers</h1><p>Compare first-, second- and third-class levers using distances from the fulcrum.</p></div><div class="muted"><a href="https://www.prayatnam247.com" target="_blank" rel="noopener">www.prayatnam247.com</a><br>Contact: <a href="tel:8115749450">8115749450</a></div></header>
+<div class="layout"><section class="panel"><h2>Interactive Experiment</h2><canvas id="scene" width="900" height="460" role="img" aria-label="Animated physics simulation"></canvas><progress id="progress" value="0" max="100" aria-label="Experiment progress"></progress><div class="controls"><div class="control"><label for="mode">Experiment mode</label><select id="mode"><option value="0">First-class lever</option><option value="1">Second-class lever</option><option value="2">Third-class lever</option></select></div><div class="control"><label for="in_load">Load <output id="out_load"></output></label><input id="in_load" type="range" min="10" max="300" step="10" value="120"></div><div class="control"><label for="in_effortArm">Effort arm <output id="out_effortArm"></output></label><input id="in_effortArm" type="range" min="0.5" max="5" step="0.5" value="3"></div><div class="control"><label for="in_loadArm">Load arm <output id="out_loadArm"></output></label><input id="in_loadArm" type="range" min="0.5" max="5" step="0.5" value="1.5"></div></div><div class="buttons"><button id="start">▶ Start</button><button id="pause" class="secondary">⏸ Pause</button><button id="reset" class="secondary">↺ Reset</button></div><p class="muted">Adjust the controls to test your predictions. The model is idealised for Class 9 learning.</p></section>
+<aside class="panel"><h2>Live Measurements</h2><div class="metrics"><div class="metric"><small id="label0">Measurement</small><strong id="value0">—</strong></div><div class="metric"><small id="label1">Measurement</small><strong id="value1">—</strong></div><div class="metric"><small id="label2">Measurement</small><strong id="value2">—</strong></div><div class="metric"><small id="label3">Measurement</small><strong id="value3">—</strong></div></div><div class="formula"><div class="muted">Physics principle</div><b>Effort × effort arm = Load × load arm</b><div id="steps" aria-live="polite"></div></div><div class="note" id="concept" aria-live="polite"></div></aside></div>
+<section class="panel" style="margin-top:16px"><h2>Observation & Learning</h2><p>Ideal equilibrium: moments about the fulcrum balance. The selected lever class changes the relative placement of fulcrum, load and effort.</p><p><b>Try this:</b> Change one slider at a time, record the measurements, and explain the effect using the formula.</p></section>
+<footer>Prayatnam Academy · <a href="https://www.prayatnam247.com">www.prayatnam247.com</a> · 8115749450<br><span class="muted">Chapter 7 · Lab 8: Three Classes of Levers</span></footer></main>
+<script id="config" type="application/json">{"n": 8, "slug": "lever_simulator", "title": "Three Classes of Levers", "desc": "Compare first-, second- and third-class levers using distances from the fulcrum.", "controls": [["load", "Load", "N", 10, 300, 10, 120], ["effortArm", "Effort arm", "m", 0.5, 5, 0.5, 3], ["loadArm", "Load arm", "m", 0.5, 5, 0.5, 1.5]], "kind": "lever", "formula": "Effort \u00d7 effort arm = Load \u00d7 load arm", "notes": "Ideal equilibrium: moments about the fulcrum balance. The selected lever class changes the relative placement of fulcrum, load and effort."}</script><script>
+(()=>{
+'use strict';
+const config=JSON.parse(document.getElementById('config').textContent);
+const $=id=>document.getElementById(id), canvas=$('scene'),c=canvas.getContext('2d');
+let progress=0,playing=false,prev=null,raf=0,mode=0;
+const fmt=v=>Math.abs(v)<.005?'0':Number(v.toFixed(2)).toLocaleString('en-IN',{maximumFractionDigits:2});
+const vals=()=>Object.fromEntries(config.controls.map(a=>[a[0],+$('in_'+a[0]).value]));
+function line(x,y,xx,yy,color='#6ca2bf',width=3){c.strokeStyle=color;c.lineWidth=width;c.beginPath();c.moveTo(x,y);c.lineTo(xx,yy);c.stroke()}
+function rect(x,y,w,h,color){c.fillStyle=color;c.fillRect(x,y,w,h)}
+function circle(x,y,r,color){c.fillStyle=color;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill()}
+function text(s,x,y,color='#eaf6ff',size=20){c.fillStyle=color;c.font='bold '+size+'px system-ui';c.fillText(s,x,y)}
+function arrow(x,y,xx,yy,color){line(x,y,xx,yy,color,5);const a=Math.atan2(yy-y,xx-x);line(xx,yy,xx-15*Math.cos(a-.5),yy-15*Math.sin(a-.5),color,5);line(xx,yy,xx-15*Math.cos(a+.5),yy-15*Math.sin(a+.5),color,5)}
+function results(v){
+ let out=[],steps='',message='';
+ if(config.kind==='energy'){
+ const ke=.5*v.mass*v.speed*v.speed,pe=v.mass*9.8*v.height;
+ out=[['Kinetic energy',fmt(ke)+' J'],['Potential energy',fmt(pe)+' J'],['Total energy',fmt(ke+pe)+' J'],['KE / PE',pe?fmt(ke/pe):'—']];
+ steps=`KE = ½ × ${v.mass} × ${fmt(v.speed)}² = ${fmt(ke)} J<br>PE = ${v.mass} × 9.8 × ${v.height} = ${fmt(pe)} J`;
+ message='Doubling speed makes kinetic energy four times larger. Doubling height doubles gravitational potential energy.';
+ }else if(config.kind==='conservation'){
+ const h=v.height*(1-progress),pe=v.mass*v.gravity*h,total=v.mass*v.gravity*v.height,ke=total-pe,vel=Math.sqrt(2*v.gravity*(v.height-h));
+ out=[['Kinetic energy',fmt(ke)+' J'],['Potential energy',fmt(pe)+' J'],['Total energy',fmt(total)+' J'],['Speed',fmt(vel)+' m/s']];
+ steps=`PE = mgh = ${v.mass} × ${fmt(v.gravity)} × ${fmt(h)} = ${fmt(pe)} J<br>KE = ${fmt(total)} − ${fmt(pe)} = ${fmt(ke)} J`;
+ message='The cart loses height as it moves. Potential energy converts to kinetic energy; total mechanical energy remains constant.';
+ }else if(config.kind==='theorem'){
+ const d=v.distance*progress,work=v.force*d,initial=.5*v.mass*v.speed*v.speed,final=initial+work,vel=Math.sqrt(2*final/v.mass);
+ out=[['Net work',fmt(work)+' J'],['Change in KE',fmt(final-initial)+' J'],['Final speed',fmt(vel)+' m/s'],['Initial KE',fmt(initial)+' J']];
+ steps=`W = F × s = ${v.force} × ${fmt(d)} = ${fmt(work)} J<br>ΔKE = ${fmt(final)} − ${fmt(initial)} = ${fmt(final-initial)} J`;
+ message='Net work equals the change in kinetic energy. Adjust the force or displacement and compare the two values.';
+ }else if(config.kind==='advantage'){
+ const ma=v.load/v.effort;
+ out=[['Mechanical advantage',fmt(ma)],['Load',fmt(v.load)+' N'],['Effort',fmt(v.effort)+' N'],['Load / Effort',fmt(ma)]];
+ steps=`MA = Load / Effort = ${v.load} / ${v.effort} = ${fmt(ma)}`;
+ message=ma>1?'The load is greater than the effort: the machine multiplies force.':ma<1?'The effort is greater than the load: this is a force disadvantage.':'The effort equals the load: MA = 1.';
+ }else if(config.kind==='lever'){
+ const effort=v.load*v.loadArm/v.effortArm,ma=v.effortArm/v.loadArm;
+ out=[['Required effort',fmt(effort)+' N'],['Ideal MA',fmt(ma)],['Load moment',fmt(v.load*v.loadArm)+' N·m'],['Effort moment',fmt(effort*v.effortArm)+' N·m']];
+ steps=`Effort = (${v.load} × ${v.loadArm}) / ${v.effortArm} = ${fmt(effort)} N`;
+ message=['Class I: fulcrum lies between effort and load.','Class II: load lies between fulcrum and effort.','Class III: effort lies between fulcrum and load.'][mode]+' The numerical calculation uses the selected moment-arm lengths.';
+ }else if(config.kind==='pulley'){
+ const strands=mode===0?1:mode===1?2:4,effort=v.load/strands,rope=v.lift*strands;
+ out=[['Ideal MA',fmt(strands)],['Required effort',fmt(effort)+' N'],['Rope pulled',fmt(rope)+' m'],['Input = output work',fmt(v.load*v.lift)+' J']];
+ steps=`Effort = ${v.load} / ${strands} = ${fmt(effort)} N<br>Rope pulled = ${strands} × ${v.lift} = ${fmt(rope)} m`;
+ message=['Fixed pulley changes force direction, not its magnitude.','Movable pulley halves ideal effort but doubles rope travel.','Four supporting strands reduce ideal effort to one quarter.'][mode];
+ }else if(config.kind==='plane'){
+ const h=Math.min(v.height,v.length),len=v.length;
+ if(mode===0){
+ const effort=v.load*h/len,ma=len/h;
+ out=[['Ideal effort',fmt(effort)+' N'],['Ideal MA',fmt(ma)],['Input work',fmt(effort*len)+' J'],['Output work',fmt(v.load*h)+' J']];
+ steps=`Effort = Load × height / length = ${v.load} × ${fmt(h)} / ${len} = ${fmt(effort)} N`;
+ message='A longer ramp needs less effort for the same height, but requires a greater distance of travel.';
+ }else{
+ const R=len/2,r=h/2,effort=v.load*r/R,ma=R/r;
+ out=[['Ideal effort',fmt(effort)+' N'],['Ideal MA',fmt(ma)],['Wheel radius',fmt(R)+' m'],['Axle radius',fmt(r)+' m']];
+ steps=`Effort × wheel radius = Load × axle radius<br>Effort = ${v.load} × ${fmt(r)} / ${fmt(R)} = ${fmt(effort)} N`;
+ message='In wheel–axle mode, ramp length represents wheel diameter and ramp height represents axle diameter. The larger wheel radius reduces effort.';
+ }
+ }
+ return {out,steps,message};
+}
+function draw(v,r){
+ const w=900,h=460;
+ c.clearRect(0,0,w,h);rect(0,0,w,h,'#081c2e');
+ c.strokeStyle='#19364d';c.lineWidth=1;
+ for(let x=0;x<w;x+=45){c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke()}
+ for(let y=0;y<h;y+=45){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()}
+ text(config.title,32,43,'#eaf6ff',25);
+ if(config.kind==='energy'){
+  const x=140+progress*550,y=305-v.height*7;
+  rect(70,325,760,9,'#59738b');rect(x,y-55,90,55,'#5bd6ff');text('m = '+v.mass+' kg',x-4,y-70,'#ffd36f',17);
+  arrow(x+45,y-80,x+45+v.speed*9,y-80,'#72e4b4');
+  line(100,325,100,y,'#ffd36f',3);text('h = '+v.height+' m',20,205,'#ffd36f',17);
+  text('Speed = '+v.speed+' m/s',560,120,'#72e4b4');
+ }else if(config.kind==='conservation'){
+  c.beginPath();c.moveTo(100,140);c.bezierCurveTo(330,145,460,340,780,360);c.strokeStyle='#78a6c2';c.lineWidth=10;c.stroke();
+  const t=progress,x=100+680*t,y=140+220*(3*t*t-2*t*t*t);
+  circle(x,y-15,26,'#5bd6ff');circle(x-12,y+7,8,'#ffd36f');circle(x+12,y+7,8,'#ffd36f');
+  text('Height remaining: '+fmt(v.height*(1-t))+' m',70,410,'#ffd36f',19);
+  const E=v.mass*v.gravity*v.height,ke=E*progress;
+  rect(560,80,Math.max(0,210*(1-progress)),18,'#ffd36f');rect(560,111,210*progress,18,'#72e4b4');
+  text('PE',510,95,'#ffd36f',16);text('KE',510,127,'#72e4b4',16);
+ }else if(config.kind==='theorem'){
+  rect(65,335,770,12,'#59738b');const x=115+progress*610;rect(x,265,105,70,'#5bd6ff');
+  arrow(x+50,240,x+190,240,'#72e4b4');text('Net force '+v.force+' N',x-25,205,'#72e4b4',18);
+  text('Displacement '+fmt(v.distance*progress)+' m',85,398,'#ffd36f',20);
+ }else if(config.kind==='advantage'){
+  rect(110,305,220,100,'#5bd6ff');rect(580,350,170,55,'#ffd36f');
+  arrow(220,290,220,170,'#ff8da1');arrow(665,330,665,210,'#72e4b4');
+  text('LOAD',170,365,'#071421');text(v.load+' N',185,150,'#ff8da1');
+  text('EFFORT',610,383,'#071421');text(v.effort+' N',630,195,'#72e4b4');
+  text('Mechanical Advantage = '+fmt(v.load/v.effort),190,90,'#ffd36f',24);
+ }else if(config.kind==='lever'){
+  const fulcrum=mode===0?440:mode===1?180:700;
+  line(110,250,790,250,'#ffd36f',13);
+  c.fillStyle='#ff8da1';c.beginPath();c.moveTo(fulcrum,265);c.lineTo(fulcrum-42,345);c.lineTo(fulcrum+42,345);c.fill();
+  const ex=mode===0?145:mode===1?755:mode===2?430:145;
+  const lx=mode===0?755:mode===1?435:mode===2?150:755;
+  arrow(ex,150,ex,240,'#72e4b4');arrow(lx,150,lx,240,'#5bd6ff');
+  text('Effort',ex-34,125,'#72e4b4');text('Load',lx-25,125,'#5bd6ff');
+  text('Fulcrum',fulcrum-43,380,'#ff8da1');text('Effort arm = '+v.effortArm+' m',110,425,'#72e4b4',18);
+  text('Load arm = '+v.loadArm+' m',515,425,'#5bd6ff',18);
+ }else if(config.kind==='pulley'){
+  rect(160,85,580,14,'#70899f');
+  const topX=420,bottomY=310-progress*70;
+  circle(topX,145,42,'#ffd36f');
+  if(mode===0){
+   line(378,145,378,bottomY,'#72e4b4');line(462,145,462,350,'#72e4b4');
+   rect(330,bottomY,96,52,'#5bd6ff');arrow(462,310,462,375,'#ff8da1');
+  }else{
+   circle(topX,bottomY,42,'#5bd6ff');
+   line(360,95,378,bottomY,'#72e4b4');line(462,bottomY,462,145,'#72e4b4');
+   line(462,145,550,145,'#72e4b4');line(550,145,550,355,'#72e4b4');
+   if(mode===2){circle(600,145,38,'#ffd36f');circle(600,bottomY,38,'#5bd6ff');line(635,145,635,bottomY,'#72e4b4')}
+   rect(365,bottomY+42,110,52,'#5bd6ff');arrow(550,310,550,375,'#ff8da1');
+  }
+  text('Load '+v.load+' N',115,410,'#5bd6ff');text('Pull rope',570,410,'#ff8da1');
+ }else if(config.kind==='plane'){
+  if(mode===0){
+   const rise=Math.min(v.height,v.length),left=145,base=750,top=360-rise*34;
+   c.fillStyle='#456984';c.beginPath();c.moveTo(left,360);c.lineTo(base,360);c.lineTo(base,top);c.closePath();c.fill();
+   const t=progress,x=left+(base-left)*t,y=360+(top-360)*t;
+   rect(x-35,y-50,70,50,'#5bd6ff');arrow(x+30,y-65,x+115,y-65,'#72e4b4');
+   text('Length = '+v.length+' m',340,418,'#ffd36f');text('Height = '+fmt(rise)+' m',685,200,'#ffd36f');
+  }else{
+   circle(450,250,Math.min(170,65+v.length*7),'#ffd36f');
+   circle(450,250,Math.min(70,15+v.height*8),'#5bd6ff');
+   circle(450,250,9,'#071421');
+   arrow(450,85,650,85,'#72e4b4');arrow(450,310,450,400,'#ff8da1');
+   text('Wheel diameter = '+v.length+' m',40,410,'#ffd36f',18);
+   text('Axle diameter = '+fmt(Math.min(v.height,v.length))+' m',500,410,'#5bd6ff',18);
+  }
+ }
+ text('Progress: '+Math.round(progress*100)+'%',680,43,'#a9bed0',16);
+}
+function refresh(){
+ const v=vals();
+ config.controls.forEach(a=>$('out_'+a[0]).textContent=fmt(v[a[0]])+' '+a[2]);
+ const r=results(v);
+ r.out.forEach((x,i)=>{$('label'+i).textContent=x[0];$('value'+i).textContent=x[1]});
+ $('steps').innerHTML=r.steps;$('concept').textContent=r.message;
+ $('progress').value=progress*100;draw(v,r);
+}
+function stop(){playing=false;prev=null;cancelAnimationFrame(raf)}
+function tick(now){
+ if(!playing)return;
+ if(prev===null)prev=now;
+ const dt=Math.min(.05,(now-prev)/1000);prev=now;
+ progress=Math.min(1,progress+dt/4);
+ refresh();
+ if(progress>=1){stop();$('start').textContent='↻ Replay';return}
+ raf=requestAnimationFrame(tick);
+}
+$('start').addEventListener('click',()=>{if(playing)return;if(progress>=1)progress=0;playing=true;prev=null;$('start').textContent='▶ Running';raf=requestAnimationFrame(tick)});
+$('pause').addEventListener('click',()=>{stop();$('start').textContent='▶ Resume'});
+$('reset').addEventListener('click',()=>{stop();progress=0;$('start').textContent='▶ Start';refresh()});
+config.controls.forEach(a=>$('in_'+a[0]).addEventListener('input',()=>{stop();progress=0;$('start').textContent='▶ Start';refresh()}));
+if($('mode'))$('mode').addEventListener('change',()=>{mode=+$('mode').value;stop();progress=0;$('start').textContent='▶ Start';refresh()});
+refresh();
+})();
+</script></body></html>
