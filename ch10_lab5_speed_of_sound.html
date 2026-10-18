@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chapter 10 Lab 5: Speed of Sound | Prayatnam Academy</title><style>*{box-sizing:border-box}body{margin:0;background:#081729;color:#f0f7ff;font:15px/1.5 system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:15px}header,section,footer{background:#112840;border:1px solid #30506b;border-radius:16px;padding:18px;margin-bottom:15px}.brand{color:#ffd46e;font-weight:800}h1{font-size:clamp(24px,4vw,36px);margin:7px 0}h2{margin:0 0 10px;font-size:20px}p{color:#bad0e0}.layout{display:grid;grid-template-columns:1.5fr 1fr;gap:15px}.layout section{min-width:0}canvas{width:100%;height:auto;background:#081d30;border-radius:12px;border:1px solid #3a5974}.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.control,.metric{padding:12px;border-radius:10px;background:#091c30;border:1px solid #2f4b65}label{display:flex;justify-content:space-between;gap:5px;font-size:13px;font-weight:650}output{color:#ffd46e}input{width:100%;accent-color:#60d8ff;margin-top:13px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric small{color:#aac2d4;display:block}.metric strong{font-size:clamp(17px,2.5vw,25px)}button{border:0;border-radius:10px;padding:11px 16px;margin:12px 5px 0 0;font:inherit;font-weight:750;background:#60d8ff;color:#061522;cursor:pointer}.secondary{background:#31516d;color:white}#formula,#explain{padding:13px;border-radius:10px;background:#091c30;margin-top:12px;line-height:1.8}#explain{border-left:4px solid #70e6b4}a{color:#60d8ff}footer{text-align:center;color:#aac2d4}@media(max-width:780px){.layout{grid-template-columns:1fr}}@media(max-width:440px){main{padding:9px}header,section,footer{padding:12px}.controls{grid-template-columns:1fr}}</style></head><body><main><header><div class="brand">✦ Prayatnam Academy</div><p>Class 9 Science · Chapter 10: Sound</p><h1>Lab 5: Speed of Sound</h1><p>Interactive concept simulator • Desktop and mobile</p></header><div class="layout"><section><h2>Virtual Experiment</h2><canvas id="canvas" width="900" height="420" aria-label="Interactive physics animation"></canvas><div class="controls"><div class="control"><label for="medium">Medium</label><select id="medium"><option value="air">Air</option><option value="water">Water</option><option value="steel">Steel</option></select></div><div class="control"><label for="input_distance">Distance <output id="out_distance"></output></label><input id="input_distance" type="range" min="10" max="1000" step="10" value="200"></div><div class="control"><label for="input_temperature">Air temperature <output id="out_temperature"></output></label><input id="input_temperature" type="range" min="0" max="40" step="5" value="20"></div></div><button id="start">▶ Start</button><button id="pause" class="secondary">⏸ Pause</button><button id="reset" class="secondary">↺ Reset</button><p>Visuals are conceptual; timing and scales are adapted for learning.</p></section><section><h2>Live Measurements</h2><div class="metrics"><div class="metric"><small id="label0">Measurement</small><strong id="value0">—</strong></div><div class="metric"><small id="label1">Measurement</small><strong id="value1">—</strong></div><div class="metric"><small id="label2">Measurement</small><strong id="value2">—</strong></div><div class="metric"><small id="label3">Measurement</small><strong id="value3">—</strong></div></div><div id="formula" aria-live="polite"></div><div id="explain" aria-live="polite"></div></section></div><section><h2>Student Activity</h2><p>Change one variable at a time. Predict the result, run the animation, and explain the change using the live calculations.</p></section><footer>Prayatnam Academy · <a href="https://www.prayatnam247.com">www.prayatnam247.com</a> · 8115749450<br>Chapter 10: Sound · Lab 5</footer></main><script id="config" type="application/json">{"type": "speed", "controls": ["distance", "temperature"], "spec": {"distance": ["Distance", "m", 10, 1000, 10, 200], "temperature": ["Air temperature", "\u00b0C", 0, 40, 5, 20]}}</script><script>
+(()=>{
+const cfg=JSON.parse(document.getElementById('config').textContent),$=id=>document.getElementById(id);
+const ctx=$('canvas').getContext('2d');let t=0,playing=false,prev=0,request=0;
+const fmt=x=>Number(x.toFixed(2)).toLocaleString('en-IN',{maximumFractionDigits:2});
+function update(){
+ const v=Object.fromEntries(cfg.controls.map(k=>[k,+$('input_'+k).value]));
+ cfg.controls.forEach(k=>$('out_'+k).textContent=fmt(v[k])+' '+cfg.spec[k][1]);
+ const type=cfg.type;let values=[],formula='',explain='';
+ if(type==='vibration'){
+  values=[['Frequency',v.frequency+' Hz'],['Time period',fmt(1/v.frequency)+' s'],['Amplitude',v.amplitude+' units'],['Oscillations in 5 s',5*v.frequency]];
+  formula='T = 1/f = 1/'+v.frequency+' = '+fmt(1/v.frequency)+' s';
+  explain='Vibrating objects disturb the surrounding medium and produce alternating compressions and rarefactions.';
+ }else if(type==='media'||type==='speed'){
+  const speeds={air:331+.6*v.temperature,water:1480,steel:5960,vacuum:0},medium=$('medium').value,s=speeds[medium],travel=s?v.distance/s:Infinity;
+  values=[['Medium',medium],['Speed',s?fmt(s)+' m/s':'No sound'],['Distance',v.distance+' m'],['Travel time',s?fmt(travel)+' s':'Impossible']];
+  formula=s?'Time = distance / speed = '+v.distance+'/'+fmt(s)+' = '+fmt(travel)+' s':'A vacuum has no particles to transmit sound.';
+  explain='Sound needs a material medium. Values are approximate; the speed varies with temperature and material properties.';
+ }else if(type==='longitudinal'||type==='wave'){
+  values=[['Frequency',v.frequency+' Hz'],['Wavelength',v.wavelength+' m'],['Period',fmt(1/v.frequency)+' s'],['Wave speed',fmt(v.frequency*v.wavelength)+' m/s']];
+  formula='T = 1/f = '+fmt(1/v.frequency)+' s; v = fλ = '+fmt(v.frequency*v.wavelength)+' m/s';
+  explain=type==='longitudinal'?'Sound is a longitudinal wave: particles oscillate parallel to propagation; compressions and rarefactions move through the medium.':'Amplitude measures maximum particle displacement; wavelength is the separation between repeating points; frequency is oscillations per second.';
+ }else if(type==='pitch'){
+  const range=v.frequency<20?'Infrasonic':v.frequency>20000?'Ultrasonic':'Audible';
+  values=[['Frequency',v.frequency+' Hz'],['Category',range],['Relative intensity',fmt((v.amplitude/10)**2)],['Period',fmt(1/v.frequency)+' s']];
+  formula='Intensity ∝ amplitude²; relative intensity = ('+v.amplitude+'/10)²';
+  explain='Pitch increases with frequency, while intensity increases with the square of amplitude. Human hearing is typically about 20–20,000 Hz; this lab visualises a low-frequency subset.';
+ }else if(type==='echo'){
+  const time=2*v.distance/v.speed;
+  values=[['Echo delay',fmt(time)+' s'],['Round-trip distance',2*v.distance+' m'],['Distinct echo?',time>=.1?'Usually yes':'Usually no'],['Minimum distance',fmt(.05*v.speed)+' m']];
+  formula='Echo time = 2 × distance / speed = '+fmt(time)+' s';
+  explain='Sound travels to a reflecting surface and back. A separate echo generally requires a delay of at least about 0.1 second.';
+ }else if(type==='reverb'){
+  const energy=Math.pow(1-v.absorption/100,Math.floor(t*1000/v.interval));
+  values=[['Absorption',v.absorption+'%'],['Reflection interval',v.interval+' ms'],['Reflections elapsed',Math.floor(t*1000/v.interval)],['Remaining energy',fmt(100*energy)+'%']];
+  formula='Energy fraction after N reflections = (1 − absorption)^N';
+  explain='Reverberation is persistent sound caused by many reflections. Soft surfaces absorb more sound energy and reduce reverberation.';
+ }else if(type==='sonar'){
+  const time=2*v.depth/v.speed;
+  values=[['Water depth',v.depth+' m'],['Sound speed',v.speed+' m/s'],['Echo delay',fmt(time)+' s'],['Round-trip path',2*v.depth+' m']];
+  formula='Depth = speed × echo time / 2; time = '+fmt(time)+' s';
+  explain='SONAR estimates underwater distances from reflected sound. Ultrasound (>20 kHz) is also used in medicine and industrial testing.';
+ }
+ values.forEach((row,i)=>{$('label'+i).textContent=row[0];$('value'+i).textContent=row[1]});
+ $('formula').textContent=formula;$('explain').textContent=explain;
+ draw(v);
+}
+function draw(v){
+ const c=ctx,W=900,H=420;c.clearRect(0,0,W,H);c.fillStyle='#081d30';c.fillRect(0,0,W,H);
+ c.strokeStyle='#1c3850';c.lineWidth=1;
+ for(let x=0;x<W;x+=45){c.beginPath();c.moveTo(x,0);c.lineTo(x,H);c.stroke()}
+ for(let y=0;y<H;y+=45){c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke()}
+ function text(s,x,y,col='#eff8ff'){c.fillStyle=col;c.font='bold 19px system-ui';c.fillText(s,x,y)}
+ function line(x,y,X,Y,col='#60d8ff',width=4){c.strokeStyle=col;c.lineWidth=width;c.beginPath();c.moveTo(x,y);c.lineTo(X,Y);c.stroke()}
+ function dot(x,y,r=7,col='#ffd46e'){c.fillStyle=col;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill()}
+ const k=cfg.type;
+ if(['vibration','longitudinal'].includes(k)){
+  text(k==='vibration'?'Vibrating tuning fork → air pressure waves':'Particle oscillation ↔     Wave energy →',55,55,'#ffd46e');
+  for(let i=0;i<58;i++){const x=85+i*12+v.amplitude*2*Math.sin(i/(k==='longitudinal'?v.wavelength:4)-t*v.frequency*2),y=200+((i%3)-1)*24;dot(x,y,5,'#60d8ff')}
+  if(k==='vibration'){line(85,150,85,265,'#ffd46e',13);line(85,150,165+v.amplitude*Math.sin(t*v.frequency*6),125,'#ffd46e',9);line(85,265,165-v.amplitude*Math.sin(t*v.frequency*6),290,'#ffd46e',9)}
+  text('Dense bands: compression     Sparse bands: rarefaction',75,355,'#70e6b4');
+ }else if(['wave','pitch'].includes(k)){
+  const cycles=k==='pitch'?Math.max(1,Math.min(16,v.frequency/2)):Math.max(1,18/v.wavelength);
+  line(65,220,840,220,'#839fb7',2);c.beginPath();
+  for(let i=0;i<=600;i++){const x=70+760*i/600,y=220-v.amplitude*10*Math.sin(2*Math.PI*cycles*i/600-t*4);if(i===0)c.moveTo(x,y);else c.lineTo(x,y)}
+  c.strokeStyle='#60d8ff';c.lineWidth=4;c.stroke();text('Amplitude ↕',95,120,'#ffd46e');text('Frequency: '+v.frequency+' Hz',570,355,'#70e6b4');
+ }else if(['media','speed'].includes(k)){
+  const medium=$('medium').value,sp={air:331+.6*v.temperature,water:1480,steel:5960,vacuum:0}[medium],travel=sp?v.distance/sp:Infinity;
+  c.fillStyle=medium==='vacuum'?'#192638':'#1b4e67';c.fillRect(65,170,770,110);
+  for(let i=0;i<40;i++)dot(75+i*19,225,3,'#b2c8d7');
+  if(sp)dot(65+Math.min(1,t/Math.max(.05,travel))*770,225,17,'#ffd46e');
+  text('SOURCE',65,140,'#70e6b4');text('RECEIVER',730,140,'#ffd46e');text(medium==='vacuum'?'Sound cannot propagate in vacuum':'Medium: '+medium,290,355);
+ }else if(k==='echo'||k==='sonar'){
+  const distance=k==='sonar'?v.depth:v.distance,speed=v.speed,delay=2*distance/speed,phase=Math.min(1,t/Math.max(.05,delay));
+  c.fillStyle='#7e97ac';c.fillRect(785,95,22,245);dot(90,215,20,'#70e6b4');
+  dot(90+690*(phase<=.5?phase*2:(1-phase)*2),215,15,'#ffd46e');
+  line(120,155,770,155);line(770,285,120,285,'#ff9bad');
+  text('Outgoing pulse →',275,125);text('← Reflected pulse',295,325,'#ff9bad');
+  text('Round trip: '+fmt(delay)+' s',280,385,'#ffd46e');
+ }else if(k==='reverb'){
+  for(let i=0;i<13;i++){const energy=Math.pow(1-v.absorption/100,i),height=230*energy;c.fillStyle='#60d8ff';c.fillRect(85+i*55,335-height,28,height)}
+  text('Successive reflected sound energy',200,70,'#ffd46e');
+  text('More absorption → shorter reverberation',170,395,'#70e6b4');
+ }
+}
+function stop(){playing=false;prev=0;cancelAnimationFrame(request)}
+function frame(now){if(!playing)return;if(!prev)prev=now;t=Math.min(5,t+Math.min(.05,(now-prev)/1000));prev=now;update();if(t>=5){stop();$('start').textContent='↻ Replay'}else request=requestAnimationFrame(frame)}
+$('start').onclick=()=>{if(playing)return;if(t>=5)t=0;playing=true;prev=0;$('start').textContent='▶ Running';request=requestAnimationFrame(frame)};
+$('pause').onclick=()=>{stop();$('start').textContent='▶ Resume'};
+$('reset').onclick=()=>{stop();t=0;$('start').textContent='▶ Start';update()};
+cfg.controls.forEach(k=>$('input_'+k).oninput=()=>{stop();t=0;$('start').textContent='▶ Start';update()});
+if($('medium'))$('medium').onchange=()=>{stop();t=0;$('start').textContent='▶ Start';update()};
+update();
+})();
+</script></body></html>
